@@ -15,10 +15,10 @@ For large data sets, we include wrappers of the PQSQ-based procedures implemente
 Simplest examples of use:
 
 >>[V,U,C] = pcaL1(x,2); plot(U(:,1),U(:,2),'ko'); axis equal;
-computes 2 first approximative l1-based principal components and plots the distribution of points
+% computes 2 first approximative l1-based principal components and plots the distribution of points
 
 >>[V,U,C] = pcaPQSQ(x,2,@L2); 
-computes 2 first l2-based error principal components
+% computes 2 first l2-based error principal components
 
 >>[V,U,C] = pcaPQSQ(x,3,@L1,'intervals',defineIntervals(x,10)); 
-computes 3 first l1-based error principal components, with increased accuracy of l1 approximation (10 intervals instead of default 5)
+% computes 3 first l1-based error principal components, with increased accuracy of l1 approximation (10 intervals instead of default 5)
