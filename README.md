@@ -14,6 +14,8 @@ For large data sets, we include wrappers of the PQSQ-based procedures implemente
 
 Simplest examples of use:
 
+>> x = load('test.txt'); % rows of x are objects (data points), and columns are variables (data space coordinates)
+
 >>[V,U,C] = pcaL1(x,2); plot(U(:,1),U(:,2),'ko'); axis equal;
 % computes 2 first approximative l1-based principal components and plots the distribution of points
 
