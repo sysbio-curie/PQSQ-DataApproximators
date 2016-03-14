@@ -19,6 +19,9 @@ Simplest examples of use:
 >>[V,U,C] = pcaL1(x,2); plot(U(:,1),U(:,2),'ko'); axis equal;
 % computes 2 first approximative l1-based principal components and plots the distribution of points
 
+>>[V,U,C] = pcaL1(x,2,'javacode'); 
+% computes 2 first approximative l1-based principal components using java code (3-4 times faster implementation)
+
 >>[V,U,C] = pcaPQSQ(x,2,'potential',@L2); 
 % computes 2 first l2-based error principal components
 
