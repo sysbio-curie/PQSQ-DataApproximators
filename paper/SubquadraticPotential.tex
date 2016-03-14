@@ -311,7 +311,7 @@ Accordingly to the classical definition of the first principal component, it is 
 u_i = \arg \min_s \sum_k f(x_i^k-V^ks-\delta^k).
 \end{equation}
 
-The standard first principal component (PC1) corresponds to $f(x)=x^2$ when the vectors $\vec{V}, \vec{\delta}$ can be found by a simple iterative splitting algorithm for Singular Value Decomposition (SVD). If $X$ does not contain missing values then $\vec{\delta}$ is the vector of arithmetic mean values. By contrast, computing $L1$-based principal components ($f(x)=|x|$) represents a much more challenging optimization problem \cite{Brooks2013}. Several approximative algorithms for computing $L1$-norm PCA have been recently suggested and benchmarked \cite{}. There was no general efficient algorithm suggested for computing PCA suggested in case of arbitrary metrics for some monotonous function $f(x)$.
+The standard first principal component (PC1) corresponds to $f(x)=x^2$ when the vectors $\vec{V}, \vec{\delta}$ can be found by a simple iterative splitting algorithm for Singular Value Decomposition (SVD). If $X$ does not contain missing values then $\vec{\delta}$ is the vector of arithmetic mean values. By contrast, computing $L1$-based principal components ($f(x)=|x|$) represents a much more challenging optimization problem \cite{Brooks2013}. Several approximative algorithms for computing $L1$-norm PCA have been recently suggested and benchmarked \cite{}. There was no general efficient algorithm suggested for computing PCA in case of arbitrary approximation measure for some monotonous function $f(x)$.
 
 Computing PCA based on PQSQ approximation error is only slightly more complicated than computing the standard $L2$ PCA by SVD. We provide a pseudo-code (\textbf{Algorithm \ref{PQSQ_PC1}}) of a simple iterative algorithm (similar to \textbf{Algorithm \ref{PQSQ_Mean_Algorithm}}) with guaranteed convergence.
 
@@ -344,7 +344,7 @@ $$
 %\begin{cases}
 %V^k \times \sum_s a_s^k \sum_{i\in \mathcal{R}_s^k}u_i + \delta^k \times \sum_s a_s^k |\mathcal{R}_s^k| = \sum_s a_s^k \sum_{i\in \mathcal{R}_s^k}x_i^k \\
 %V^k \times \sum_s a_s^k \sum_{i\in \mathcal{R}_s^k}(u_i)^2 + \delta^k \times \sum_s a_s^k \sum_{i\in \mathcal{R}_s^k}u_i = \sum_s a_s^k \sum_{i\in \mathcal{R}_s^k}x_i^ku_i
-V^k = \frac{\sum_s a_s^k \sum_{i\in \mathcal{R}_s^k}(x_i^k-\delta^k)u_i}{\sum_s a_s^k \sum_{i\in \mathcal{R}_s^k}(u_i)^2}
+V^k \gets \frac{\sum_s a_s^k \sum_{i\in \mathcal{R}_s^k}(x_i^k-\delta^k)u_i}{\sum_s a_s^k \sum_{i\in \mathcal{R}_s^k}(u_i)^2}
 %\end{cases}
 $$
 \State \textbf{end for}
@@ -357,7 +357,7 @@ $$
 \end{algorithm}
 
 
-\subsection{Principal Graphs and Manifolds in PQSQ metrics}
+\subsection{PQSQ-based Principal Graphs and Manifolds}
 
 
 \subsection{Convergence properties}
@@ -392,7 +392,7 @@ After defining $D^k$ we use the following definition of intervals:
 r_j^k = D^k\frac{j^2}{p^2}, j=0\dots p.
 \end{equation}
 
-More sophisticated approaches are also possible to apply such as, given the number of intervals $p$ and the majorating function $f(x)$, choose $r_j, j=\dots p$ in order to minimize the integral difference
+More sophisticated approaches are also possible to apply such as, given the number of intervals $p$ and the majorating function $f(x)$, choose $r_j, j=1\dots p$ in order to minimize the integral difference
 
 $$
 \int_0^{r_p}(f(x)-u(x))dx \rightarrow \min.
@@ -421,7 +421,7 @@ http://www.optimization-online.org/DB\_FILE/2012/04/3436.pdf for possible benchm
 \section{Conclusion}
 
 In this paper we propose a method of constructing the standard data approximators (mean value, $k$-means clustering, principal components, principal graphs)
-for arbitrary non-Euclidean metrics with subquadratic growth by using a piecewise-quadratic energy functional (PQSQ potential). These approximators can be computed
+for arbitrary non-quadratic approximation error with subquadratic growth by using a piecewise-quadratic energy functional (PQSQ potential). These approximators can be computed
 by applying quasi-quadratic optimization procedures, which are simple adaptations of the previously described standard and computationally efficient algorithms.
 
 The suggested methodology have several advantages:
@@ -436,7 +436,7 @@ The suggested methodology have several advantages:
 
 One of the application of the suggested methodology is approximating the popular in data mining $L1$ metrics. \myworries{ Does it provide (more) sparsity also compared to L2?} We show by numerical simulations, that PQSQ-based approximators...
 
-PSQS potential can be evidently applied in the task of regression, replacing the classical Mean Squared Distance approach.
+PSQS potential can be evidently applied in the task of regression, replacing the classical Least Squares or L1-based Least Absolute Deviation methods.
 
 \bibliographystyle{model1-num-names}
 \bibliography{SubquadraticPotential}
