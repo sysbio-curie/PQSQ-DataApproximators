@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # PQSQ-DataApproximators
 
 This is a set of Matlab procedures for performing PQSQ-based data approximation.
@@ -64,4 +63,3 @@ Simplest examples of use:
 
 >>[V,U,C] = pcaPQSQ(x,5,'javacode','potential','L1','intervals',defineIntervals(x,10)); 
 % computes 5 first l1-based error principal components, with increased accuracy of l1 approximation (10 intervals instead of default 5) and Java implementation of the method (~3-4 times faster than Matlab)
->>>>>>> origin/master
