@@ -4,6 +4,7 @@ function intervals = defineIntervals(x, number_of_intervals)
 
    %characteristic_distance = mad(x(:,i))*6;
    characteristic_distance = max(x(:,i))-min(x(:,i));
+   %characteristic_distance = characteristic_distance*0.1;
     
     delta = sqrt(characteristic_distance)/number_of_intervals;
     

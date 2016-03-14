@@ -7,12 +7,19 @@ eps=0.001;
 % prepare matrix for fast interval indexing 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 indices = zeros(size(x,1),size(x,2));
+% for k=1:size(x,2) 
+%     [x1cinf,indices_k,intervals_symm_k] = prepareForSplitPointIntervalsFast(x(:,k),intervals(k,:));
+%     Xc_sorted_inf(:,k) = x1cinf;
+%     indices(:,k) = indices_k;
+%     intervals_symm(k,:) = intervals_symm_k;
+% end;
+
+intervals_inf = zeros(size(x,2),size(intervals,2)+1);
+
 for k=1:size(x,2) 
-    [x1cinf,indices_k,intervals_symm_k] = prepareForSplitPointIntervalsFast(x(:,k),intervals(k,:));
-    Xc_sorted_inf(:,k) = x1cinf;
-    indices(:,k) = indices_k;
-    intervals_symm(k,:) = intervals_symm_k;
-end;
+    intervals_inf(k,1:size(intervals,2)) = intervals(k,:);
+    intervals_inf(k,size(intervals,2)+1) = Inf;
+end
 
 
 for i=1:length(varargin)
@@ -50,7 +57,9 @@ end
     distances = dist(x(:,k),m);
     
     %inds = splitPointIntervals(distances,intervals(k,:));
-    inds = splitPointIntervalsFast(Xc_sorted_inf(:,k),indices(:,k),m,intervals_symm(k,:));
+    %inds = splitPointIntervalsFast(Xc_sorted_inf(:,k),indices(:,k),m,intervals_symm(k,:));
+    inds = splitPointIntervalsFast1(distances,intervals_inf(k,:));
+    %inds1-inds'
     
     x1=0;
     x2=0;

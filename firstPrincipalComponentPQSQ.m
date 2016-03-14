@@ -21,20 +21,27 @@ for i=1:length(varargin)
     end
 end
 
+intervals_inf = zeros(size(x,2),size(intervals,2)+1);
+
+for k=1:size(x,2) 
+    intervals_inf(k,1:size(intervals,2)) = intervals(k,:);
+    intervals_inf(k,size(intervals,2)+1) = Inf;
+end
+
+
 [A,B] = computeABcoefficients(intervals, potential_function_handle);
 
-if meanDefined
-C = meanVector;
-else
-C = PQSQ_Mean(x,intervals,potential_function_handle);
-end
-C1 = C;
+% if meanDefined
+% C = meanVector;
+% else
+% C = PQSQ_Mean(x,intervals,potential_function_handle);
+% end
 V = zeros(1,size(x,2));
 V1 = zeros(1,size(x,2));
 U = zeros(size(x,1),1);
 U1 = U;
 N = size(x,1);
-mn = C;
+%mn = C;
 stdev = std(x);
 
 RS = zeros(size(x,1),size(x,2));
@@ -44,10 +51,12 @@ RS = zeros(size(x,1),size(x,2));
 %%%%%%%%%%%%%%%%%%%%%%%%%%
 % Center data matrix
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Xc = zeros(size(x,1),size(x,2));
-for i=1:size(x,1) 
-    Xc(i,:)= x(i,:)-mn; 
-end;
+% Xc = zeros(size(x,1),size(x,2));
+% for i=1:size(x,1) 
+%     Xc(i,:)= x(i,:)-mn; 
+% end;
+
+Xc = x;
 
 
 
@@ -92,8 +101,9 @@ U1 = U;
 
 for k=1:size(x,2)
     %inds = splitPointIntervals(Xc(:,k)-V(k)*U(:),intervals(k,:));
-    [x1cinf,indices,intervals_symm] = prepareForSplitPointIntervalsFast(Xc(:,k)-V(k)*U(:),intervals(k,:));
-    inds = splitPointIntervalsFast(x1cinf,indices,0,intervals_symm);
+    %[x1cinf,indices,intervals_symm] = prepareForSplitPointIntervalsFast(Xc(:,k)-V(k)*U(:),intervals(k,:));
+    %inds = splitPointIntervalsFast(x1cinf,indices,0,intervals_symm);
+    inds = splitPointIntervalsFast1(Xc(:,k)-V(k)*U(:),intervals_inf(k,:));
     RS(:,k) = inds(:);
 end
 
