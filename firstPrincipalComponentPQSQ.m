@@ -23,18 +23,17 @@ end
 
 [A,B] = computeABcoefficients(intervals, potential_function_handle);
 
-if meanDefined
-C = meanVector;
-else
-C = PQSQ_Mean(x,intervals,potential_function_handle);
-end
-C1 = C;
+% if meanDefined
+% C = meanVector;
+% else
+% C = PQSQ_Mean(x,intervals,potential_function_handle);
+% end
 V = zeros(1,size(x,2));
 V1 = zeros(1,size(x,2));
 U = zeros(size(x,1),1);
 U1 = U;
 N = size(x,1);
-mn = C;
+%mn = C;
 stdev = std(x);
 
 RS = zeros(size(x,1),size(x,2));
@@ -44,10 +43,12 @@ RS = zeros(size(x,1),size(x,2));
 %%%%%%%%%%%%%%%%%%%%%%%%%%
 % Center data matrix
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Xc = zeros(size(x,1),size(x,2));
-for i=1:size(x,1) 
-    Xc(i,:)= x(i,:)-mn; 
-end;
+% Xc = zeros(size(x,1),size(x,2));
+% for i=1:size(x,1) 
+%     Xc(i,:)= x(i,:)-mn; 
+% end;
+
+Xc = x;
 
 
 

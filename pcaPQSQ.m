@@ -20,15 +20,21 @@ for i=1:length(varargin)
 end
 
 if ~useJavaImplementation
-xwork = x;
+
+
+%calculate central point
 C = PQSQ_Mean(x,intervals,potential_function_handle);
+
+% initiate xwork like x-C
+xwork = bsxfun(@minus,x,C);
 
 for i=1:ncomp
     if verbose
         display(sprintf('Component %i',i));
     end
     
-    [Vi,Ui] = firstPrincipalComponentPQSQ(xwork, intervals, potential_function_handle, 'mean', C, varargin);
+    %Calculate one component    
+    [Vi,Ui] = firstPrincipalComponentPQSQ(xwork, intervals, potential_function_handle, varargin{:});
     
     V(i,:) = Vi;
     U(:,i) = Ui;
@@ -36,15 +42,11 @@ for i=1:ncomp
     %%%%
     % You might want to use PQSQ-based projections: this should increase precision?
     %%%%%
-    for j=1:size(x,1)
-        proj = 0; s1 = 0; s2 = 0;
-        for k=1:size(x,2)
-           s1=s1+(xwork(j,k)-C(k))*Vi(k);
-           s2=s2+Vi(k)*Vi(k);
-        end
-        proj = s1/s2;
-        xwork(j,:) = xwork(j,:) - C - proj*Vi;
-    end
+     s2 = sqrt(sum(Vi.^2));
+     Vi = Vi/s2;
+     s1 = xwork*Vi';
+     xwork = xwork - s1*Vi;
+
     
 end
 
