@@ -80,26 +80,31 @@ if initiatilization==-1
 end
 
 if initiatilization==0
-    pc = pca(Xc);
-    pc1 = pc(:,1);
-    for i=1:size(pc1,1)
-        V(i) = pc1(i);
-    end
+    [V,~] = eigs(Xc'*Xc,1);
+    V = V';
+%     pc = pca(Xc);
+%     pc1 = pc(:,1);
+%     
+%     for i=1:size(pc1,1)
+%         V(i) = pc1(i);
+%     end
 end
 
 if initiatilization>0
-    for i=1:size(x,2)
-        V(i) = Xc(initiatilization,i);
-    end
+    V=Xc(initiatilization,:);
+%     for i=1:size(x,2)
+%         V(i) = Xc(initiatilization,i);
+%     end
 end
-
-for i=1:size(x,1)
-    U(i)=sum(Xc(i,:).*V)/sum(V.*V);
-end
-
-count = 1;
 
 V = V/norm(V);
+
+U=Xc*V';
+% for i=1:size(x,1)
+%     U(i)=sum(Xc(i,:).*V);
+% end
+
+count = 1;
 
 while(count<1000)
 
