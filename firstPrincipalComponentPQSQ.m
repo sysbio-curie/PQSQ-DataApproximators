@@ -93,13 +93,14 @@ if initiatilization>0
     end
 end
 
+V = V/norm(V);
+
 for i=1:size(x,1)
     U(i)=sum(Xc(i,:).*V)/sum(V.*V);
 end
 
 count = 1;
 
-V = V/norm(V);
 
 while(count<1000)
 
@@ -177,6 +178,7 @@ end
 
 if(V(1)<0) 
     V=-V;
+    U=-U;
 end
     
 
