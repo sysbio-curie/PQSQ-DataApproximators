@@ -356,6 +356,9 @@ $$
 \end{algorithmic}
 \end{algorithm}
 
+Computation of second and further principal components follows the standard deflation approach: projections of data points onto the previously computed component are subtracted from the data set, and the algorithm is applied to the residues. However, as it is the case in any non-quadratic metrics, the resulting components can not be orthogonal anymore. 
+Moreover, unlike $L2$-based principal components, the algorithm \ref{PQSQ_PC1} does not always converge to a unique global minimum; the computed components can depend on the initial estimate of $\vec{V}$. The situation is somewhat similar to the standard $k$-means algorithm. Therefore, in order to achieve the least possible approximation error to the linear subspace, $\vec{V}$ can be initialized randomly or by data vectors $\vec{x}_i$ many times and the deepest in PQSQ approximation error (\ref{distance_function}) minimum should be selected.
+
 
 \subsection{PQSQ-based Principal Graphs and Manifolds}
 
@@ -402,7 +405,8 @@ In further examples, we use (\ref{characteristic_distance_amplitude}) and (\ref{
 
 \subsection{Implementation}
 
-At https://github.com/auranic/PQSQ-DataApproximators we provide sample code implementing PQSQ approximators (in particular, PCA) in Matlab. We also provide Java implementation of PQSQ-based approximators (PCA, principal graphs) as a part of \emph{vdaoengine} library at https://github.com/auranic/VDAOEngine. The code is accompanied by examples of application.
+At https://github.com/auranic/PQSQ-DataApproximators we provide implementation of PQSQ approximators (in particular, PCA) in Matlab. We also provide Java implementation of PQSQ-based approximators (PCA, principal graphs) as a part of \emph{vdaoengine} library at https://github.com/auranic/VDAOEngine. The code is accompanied by examples of application.
+
 
 
 

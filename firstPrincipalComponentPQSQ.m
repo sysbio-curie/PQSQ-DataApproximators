@@ -1,8 +1,8 @@
-function [V,U,C,explainedUariance,MDS] = firstPrincipalComponentPQSQ(x, intervals, potential_function_handle, varargin)
+function [V,U,C,explainedVariance,MDS] = firstPrincipalComponentPQSQ(x, intervals, potential_function_handle, varargin)
 
 verbose=0;
 eps=0.001;
-initiatilization = 0; % 0 - PC1, 1 - random
+initiatilization = 0; % 0 - PC1, -1 - random vector, >0 - ith data vector
 meanDefined = 0;
 
 for i=1:length(varargin)
@@ -73,7 +73,7 @@ SU2 = 0;
 %V = firstPrincipalComponentStandardL2(x);
 %V =[0.4451   -0.2209    0.4951    0.4817];
 
-if initiatilization==1
+if initiatilization==-1
     for k=1:size(x,2)
         V(k) = rand()*stdev(k);
     end
@@ -84,6 +84,12 @@ if initiatilization==0
     pc1 = pc(:,1);
     for i=1:size(pc1,1)
         V(i) = pc1(i);
+    end
+end
+
+if initiatilization>0
+    for i=1:size(x,2)
+        V(i) = Xc(initiatilization,i);
     end
 end
 
@@ -169,8 +175,10 @@ end
 
 end
 
-if(V1(1)<0) V1=-V1;
+if(V(1)<0) 
+    V=-V;
 end
+    
 
 
 

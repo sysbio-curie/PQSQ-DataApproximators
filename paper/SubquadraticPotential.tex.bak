@@ -201,7 +201,7 @@ b_k = \frac{f(r_{k+1})r_k^2-f(r_{k})r_{k+1}^2}{r_k^2-r_{k+1}^2}
 
 \noindent where $f(x)$ is the majorating function, which is to be approximated (imitated) by $u(x)$. For example, in the simplest case $f(x)$ can be a linear function : $f(x)=x$, in this case, $\sum_k u(x^k)$ will approximate the $L1$-norm.
 
-Note that accordingly to (\ref{PQSQ_acoeffs},\ref{PQSQ_acoeffs}), $b_0=0, a_p=0, b_p=f(r_p)$. Therefore, the choice of $r_p$ can naturally create a ``trimmed'' version of energy potential $u(x)$ such that some data points (outliers) would not have any contribution to minimizing $u(x)$.
+Note that accordingly to (\ref{PQSQ_acoeffs},\ref{PQSQ_acoeffs}), $b_0=0, a_p=0, b_p=f(r_p)$. Therefore, the choice of $r_p$ can naturally create a ``trimmed'' version of energy potential $u(x)$ such that some data points (outliers) would not have any contribution to the gradient of $u(x)$, hence, will not affect the optimization procedure.
 
 The condition of subquadratic growth consists in the requirement $a_{k+1}\leq a_{k}$ and $b_{k+1} \geq b_{k}$. To guarantee this, the following simple condition on $f(x)$ should be satisfied:
 
@@ -221,7 +221,7 @@ f'>0, \>\>\> f''x \leq f',
 
 The definition of approximation error (\ref{distance_function}) implies that any optimization procedure based on this approximation measure can be done independently for each coordinate. Two auxiliary objects should be pre-computed to apply PQSQ potential in data analysis:
 
-(1) set of $p+1$ intervals $r_s^k, s=0...p$ for each coordinate $k=1...m$.
+(1) set of $p$ interval thresholds $r_s^k, s=1...p$ for each coordinate $k=1...m$.
 
 (2) Matrix of $a$-coefficients computed by (\ref{PQSQ_acoeffs}) based on interval definitions: $a_s^k$, $s=0...p$, $k=1...m$ separately for each coordinate $k$.
 
@@ -230,10 +230,10 @@ Minimization of PQSQ-based functional consists in two steps:
 (1) For each coordinate $k$, assign data point indices into non-overlapping sets $\mathcal{R}_s^k$:
 
 \begin{equation}
-\mathcal{R}_s^k= \{i: r_{s}^k \leq |x_i^k-\beta^k| < r_{s+1}^k\}, s = 0...p,
+\mathcal{R}_s^k= \{i: r_{s}^k \leq |x_i^k-\beta^k_i| < r_{s+1}^k\}, s = 0...p,
 \end{equation}
 
-\noindent where $\vec{\beta}=\{\beta^k\}$ is a vector which depends on the nature of the algorithm.
+\noindent where $\bf{\beta}$ is a matrix which depends on the nature of the algorithm.
 
 (2) Minimize PQSQ-based functional for each coordinate $k$ independently, where each set of points $\{x_{i\in \mathcal{R}_s^k}\}$ contributes
 to the functional quadratically with coefficient $a_s^k$. This is a quadratic optimization task.
@@ -243,7 +243,7 @@ to the functional quadratically with coefficient $a_s^k$. This is a quadratic op
 
 \subsection{Mean value and $k$-means clustering in PQSQ approximation measure}
 
-Mean vector $\bar{X}_L$  for a set of vectors $X=\{x_i^k\}$, $i=1...N, k=1...m$ and a metrics $L$ can be defined as a point minimizing the mean energy potential for all points in  $X$:
+Mean vector $\bar{X}_L$  for a set of vectors $X=\{x_i^k\}$, $i=1...N, k=1...m$ and an approximation error defined by potential $f(x)$ can be defined as a point minimizing the mean energy potential for all points in  $X$:
 
 \begin{equation}
 \sum_i\sum_k f(x_i^k-\bar{X}^k) \rightarrow \min.
@@ -311,7 +311,7 @@ Accordingly to the classical definition of the first principal component, it is 
 u_i = \arg \min_s \sum_k f(x_i^k-V^ks-\delta^k).
 \end{equation}
 
-The standard first principal component (PC1) corresponds to $f(x)=x^2$ when the vectors $\vec{V}, \vec{\delta}$ can be found by a simple iterative splitting algorithm for Singular Value Decomposition (SVD). If $X$ does not contain missing values then $\vec{\delta}$ is the vector of arithmetic mean values. By contrast, computing $L1$-based principal components ($f(x)=|x|$) represents a much more challenging optimization problem \cite{Brooks2013}. Several approximative algorithms for computing $L1$-norm PCA have been recently suggested and benchmarked \cite{}. There was no general efficient algorithm suggested for computing PCA suggested in case of arbitrary metrics for some monotonous function $f(x)$.
+The standard first principal component (PC1) corresponds to $f(x)=x^2$ when the vectors $\vec{V}, \vec{\delta}$ can be found by a simple iterative splitting algorithm for Singular Value Decomposition (SVD). If $X$ does not contain missing values then $\vec{\delta}$ is the vector of arithmetic mean values. By contrast, computing $L1$-based principal components ($f(x)=|x|$) represents a much more challenging optimization problem \cite{Brooks2013}. Several approximative algorithms for computing $L1$-norm PCA have been recently suggested and benchmarked \cite{}. There was no general efficient algorithm suggested for computing PCA in case of arbitrary approximation measure for some monotonous function $f(x)$.
 
 Computing PCA based on PQSQ approximation error is only slightly more complicated than computing the standard $L2$ PCA by SVD. We provide a pseudo-code (\textbf{Algorithm \ref{PQSQ_PC1}}) of a simple iterative algorithm (similar to \textbf{Algorithm \ref{PQSQ_Mean_Algorithm}}) with guaranteed convergence.
 
@@ -344,7 +344,7 @@ $$
 %\begin{cases}
 %V^k \times \sum_s a_s^k \sum_{i\in \mathcal{R}_s^k}u_i + \delta^k \times \sum_s a_s^k |\mathcal{R}_s^k| = \sum_s a_s^k \sum_{i\in \mathcal{R}_s^k}x_i^k \\
 %V^k \times \sum_s a_s^k \sum_{i\in \mathcal{R}_s^k}(u_i)^2 + \delta^k \times \sum_s a_s^k \sum_{i\in \mathcal{R}_s^k}u_i = \sum_s a_s^k \sum_{i\in \mathcal{R}_s^k}x_i^ku_i
-V^k = \frac{\sum_s a_s^k \sum_{i\in \mathcal{R}_s^k}(x_i^k-\delta^k)u_i}{\sum_s a_s^k \sum_{i\in \mathcal{R}_s^k}(u_i)^2}
+V^k \gets \frac{\sum_s a_s^k \sum_{i\in \mathcal{R}_s^k}(x_i^k-\delta^k)u_i}{\sum_s a_s^k \sum_{i\in \mathcal{R}_s^k}(u_i)^2}
 %\end{cases}
 $$
 \State \textbf{end for}
@@ -357,7 +357,7 @@ $$
 \end{algorithm}
 
 
-\subsection{Principal Graphs and Manifolds in PQSQ metrics}
+\subsection{PQSQ-based Principal Graphs and Manifolds}
 
 
 \subsection{Convergence properties}
@@ -368,9 +368,9 @@ $$
 \subsection{Practical choices of parameters}
 
 The main parameters of PQSQ are (a) majorating function $f(x)$ and (b) decomposition of each coordinate range into $p+1$ non-overlapping intervals.
-Depending on these parameters, various metrics properties can be exploited, including robustness to outlier data points.
+Depending on these parameters, various approximation error properties can be exploited, including robustness to outlier data points.
 
-When defining the intervals $r_j, j=1\dots p$, it is desirable to achieve a small difference between $f(\Delta x)-u(\Delta x)$ for expected argument values $\Delta x$, and choose the suitable value of the potential trimming threshold $r_p$ in order to achieve the desired robustness properties. If no trimming is needed, then $r_p$ should be made larger than the maximum expected difference between coordinate values.
+When defining the intervals $r_j, j=1\dots p$, it is desirable to achieve a small difference between $f(\Delta x)-u(\Delta x)$ for expected argument values $\Delta x$ (differences between an estimator and the data points), and choose the suitable value of the potential trimming threshold $r_p$ in order to achieve the desired robustness properties. If no trimming is needed, then $r_p$ should be made larger than the maximum expected difference between coordinate values.
 
 In our numerical experiments we used the following definition of intervals. For any data coordinate $k$, we define a characteristic difference $D^k$, for example
 
@@ -392,7 +392,7 @@ After defining $D^k$ we use the following definition of intervals:
 r_j^k = D^k\frac{j^2}{p^2}, j=0\dots p.
 \end{equation}
 
-More sophisticated approaches are also possible to apply such as, given the number of intervals $p$ and the majorating function $f(x)$, choose $r_j, j=\dots p$ in order to minimize the integral difference
+More sophisticated approaches are also possible to apply such as, given the number of intervals $p$ and the majorating function $f(x)$, choose $r_j, j=1\dots p$ in order to minimize the integral difference
 
 $$
 \int_0^{r_p}(f(x)-u(x))dx \rightarrow \min.
@@ -403,6 +403,7 @@ In further examples, we use (\ref{characteristic_distance_amplitude}) and (\ref{
 \subsection{Implementation}
 
 At https://github.com/auranic/PQSQ-DataApproximators we provide sample code implementing PQSQ approximators (in particular, PCA) in Matlab. We also provide Java implementation of PQSQ-based approximators (PCA, principal graphs) as a part of \emph{vdaoengine} library at https://github.com/auranic/VDAOEngine. The code is accompanied by examples of application.
+
 
 
 
@@ -421,7 +422,7 @@ http://www.optimization-online.org/DB\_FILE/2012/04/3436.pdf for possible benchm
 \section{Conclusion}
 
 In this paper we propose a method of constructing the standard data approximators (mean value, $k$-means clustering, principal components, principal graphs)
-for arbitrary non-Euclidean metrics with subquadratic growth by using a piecewise-quadratic energy functional (PQSQ potential). These approximators can be computed
+for arbitrary non-quadratic approximation error with subquadratic growth by using a piecewise-quadratic energy functional (PQSQ potential). These approximators can be computed
 by applying quasi-quadratic optimization procedures, which are simple adaptations of the previously described standard and computationally efficient algorithms.
 
 The suggested methodology have several advantages:
@@ -436,7 +437,7 @@ The suggested methodology have several advantages:
 
 One of the application of the suggested methodology is approximating the popular in data mining $L1$ metrics. \myworries{ Does it provide (more) sparsity also compared to L2?} We show by numerical simulations, that PQSQ-based approximators...
 
-PSQS potential can be evidently applied in the task of regression, replacing the classical Mean Squared Distance approach.
+PSQS potential can be evidently applied in the task of regression, replacing the classical Least Squares or L1-based Least Absolute Deviation methods.
 
 \bibliographystyle{model1-num-names}
 \bibliography{SubquadraticPotential}
