@@ -1,3 +1,4 @@
 function y=L1_5(x)
-y=power(x,3/2);
+%L1_5 is the L1.5 norm energy potential
+    y=power(x,3/2);
 end
