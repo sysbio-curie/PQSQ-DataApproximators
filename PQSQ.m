@@ -1,10 +1,9 @@
 function y = PQSQ(x, intervals, potential_function_handle)
 %PQSQ calculates the PQSQ energy potentials u(x) in accordance with formula
 %(2) in paper. 
-%   y is vector of cooredinate PQSQ potentials.
-%   x is vector of data point
-%   intervals is matrix of intervals boundaries. Each row contains
-%       boundaries for one coordinate.
+%   y is vector of PQSQ potentials for all points.
+%   x is vector of one coordinate for all data points
+%   intervals is vector of intervals boundaries for one coordinate. 
 %   potential_function_handle is handle of energy potential function:
 %       y = potential_function_handle(x) where x is matrix.
 
