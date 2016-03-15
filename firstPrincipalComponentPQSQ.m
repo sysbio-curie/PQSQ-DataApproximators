@@ -67,12 +67,6 @@ SU2 = 0;
 %%%%%%%%%%%%%%%%%%%%%
 % initialize V and U
 %%%%%%%%%%%%%%%%%%%%%
-%for k=1:size(x,2)
-%    V(k) = rand()*stdev(k);
-%end
-%V = firstPrincipalComponentStandardL2(x);
-%V =[0.4451   -0.2209    0.4951    0.4817];
-
 if initiatilization==-1
     for k=1:size(x,2)
         V(k) = rand()*stdev(k);
@@ -80,27 +74,18 @@ if initiatilization==-1
 end
 
 if initiatilization==0
-    pc = pca(Xc);
-    pc1 = pc(:,1);
-    for i=1:size(pc1,1)
-        V(i) = pc1(i);
-    end
+    [V,~] = eigs(Xc'*Xc,1);
+    V = V';
 end
 
 if initiatilization>0
-    for i=1:size(x,2)
-        V(i) = Xc(initiatilization,i);
-    end
+    V=Xc(initiatilization,:);
 end
 
 V = V/norm(V);
-
-for i=1:size(x,1)
-    U(i)=sum(Xc(i,:).*V)/sum(V.*V);
-end
+U=Xc*V';
 
 count = 1;
-
 
 while(count<1000)
 
