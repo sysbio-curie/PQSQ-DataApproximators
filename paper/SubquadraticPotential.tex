@@ -121,7 +121,7 @@
 %% \address[label1]{<address>}
 %% \address[label2]{<address>}
 
-\author{Alexander N. Gorban, Eugene Mirkes, Andrei Zinovyev}
+\author{Alexander N. Gorban, Evgeny M. Mirkes, Andrei Zinovyev}
 
 \address{Leicester, Paris}
 
@@ -195,13 +195,13 @@ b_k+a_kx^2, \mbox{if } r_k \leq |x|<r_{k+1}, k=0...p,
 a_k = \frac{f(r_k)-f(r_{k+1})}{r_k^2-r_{k+1}^2},
 \end{equation}
 
-\begin{equation}\label{PQSQ_acoeffs}
+\begin{equation}\label{PQSQ_bcoeffs}
 b_k = \frac{f(r_{k+1})r_k^2-f(r_{k})r_{k+1}^2}{r_k^2-r_{k+1}^2}
 \end{equation}
 
 \noindent where $f(x)$ is the majorating function, which is to be approximated (imitated) by $u(x)$. For example, in the simplest case $f(x)$ can be a linear function : $f(x)=x$, in this case, $\sum_k u(x^k)$ will approximate the $L1$-norm.
 
-Note that accordingly to (\ref{PQSQ_acoeffs},\ref{PQSQ_acoeffs}), $b_0=0, a_p=0, b_p=f(r_p)$. Therefore, the choice of $r_p$ can naturally create a ``trimmed'' version of energy potential $u(x)$ such that some data points (outliers) would not have any contribution to the gradient of $u(x)$, hence, will not affect the optimization procedure.
+Note that accordingly to (\ref{PQSQ_acoeffs},\ref{PQSQ_bcoeffs}), $b_0=0, a_p=0, b_p=f(r_p)$. Therefore, the choice of $r_p$ can naturally create a ``trimmed'' version of energy potential $u(x)$ such that some data points (outliers) would not have any contribution to the gradient of $u(x)$, hence, will not affect the optimization procedure.
 
 The condition of subquadratic growth consists in the requirement $a_{k+1}\leq a_{k}$ and $b_{k+1} \geq b_{k}$. To guarantee this, the following simple condition on $f(x)$ should be satisfied:
 
