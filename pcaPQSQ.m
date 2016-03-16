@@ -47,7 +47,9 @@ function [V,U,C,D] = pcaPQSQ(x, ncomp, varargin)
 
         % initiate xwork like x-C
         xwork = bsxfun(@minus,x,C);
-
+        V = zeros(size(x,2),ncomp);
+        U = zeros(size(x,1),ncomp);
+        
         for i=1:ncomp
             if verbose
                 display(sprintf('Component %i',i));
@@ -56,7 +58,7 @@ function [V,U,C,D] = pcaPQSQ(x, ncomp, varargin)
             %Calculate one component
             [Vi,Ui] = firstPrincipalComponentPQSQ(xwork, intervals, potential_function_handle, varargin{:});
 
-            V(i,:) = Vi;
+            V(:,i) = Vi;
             U(:,i) = Ui;
 
             %%%%
