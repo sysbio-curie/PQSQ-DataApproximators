@@ -121,7 +121,7 @@
 %% \address[label1]{<address>}
 %% \address[label2]{<address>}
 
-\author{Alexander N. Gorban, Eugene Mirkes, Andrei Zinovyev}
+\author{Alexander N. Gorban, Evgeny M. Mirkes, Andrei Zinovyev}
 
 \address{Leicester, Paris}
 
@@ -162,7 +162,7 @@ Data dimension reduction by constructing low-dimensional approximators of finite
 We solve the problem of approximating a finite set of vectors ${\vec{x}_i}\in R^m,i=1...N$ (data set) by a simpler object $L$ embedded into the data space, such that for each point $\vec{x}_i$ an approximation error $err(\vec{x}_i,L)$ function can be defined. We assume this function in the form
 
 \begin{equation}\label{distance_function}
-err(\vec{x}_i,L) = \min_{y\in L} \sum_k f(x_i^k-y^k),
+err(\vec{x}_i,L) = \min_{y\in L} \sum_k u(x_i^k-y^k),
 \end{equation}
 
 \noindent where the upper $k=1...m$ stands for the coordinate index, and $f(x)$ is a monotonously growing symmetrical function, which we will be calling the energy potential. By data approximation we mean that the configuration of $L$ in the data space minimizes the energy
@@ -195,13 +195,13 @@ b_k+a_kx^2, \mbox{if } r_k \leq |x|<r_{k+1}, k=0...p,
 a_k = \frac{f(r_k)-f(r_{k+1})}{r_k^2-r_{k+1}^2},
 \end{equation}
 
-\begin{equation}\label{PQSQ_acoeffs}
+\begin{equation}\label{PQSQ_bcoeffs}
 b_k = \frac{f(r_{k+1})r_k^2-f(r_{k})r_{k+1}^2}{r_k^2-r_{k+1}^2}
 \end{equation}
 
 \noindent where $f(x)$ is the majorating function, which is to be approximated (imitated) by $u(x)$. For example, in the simplest case $f(x)$ can be a linear function : $f(x)=x$, in this case, $\sum_k u(x^k)$ will approximate the $L1$-norm.
 
-Note that accordingly to (\ref{PQSQ_acoeffs},\ref{PQSQ_acoeffs}), $b_0=0, a_p=0, b_p=f(r_p)$. Therefore, the choice of $r_p$ can naturally create a ``trimmed'' version of energy potential $u(x)$ such that some data points (outliers) would not have any contribution to the gradient of $u(x)$, hence, will not affect the optimization procedure.
+Note that accordingly to (\ref{PQSQ_acoeffs},\ref{PQSQ_bcoeffs}), $b_0=0, a_p=0, b_p=f(r_p)$. Therefore, the choice of $r_p$ can naturally create a ``trimmed'' version of energy potential $u(x)$ such that some data points (outliers) would not have any contribution to the gradient of $u(x)$, hence, will not affect the optimization procedure.
 
 The condition of subquadratic growth consists in the requirement $a_{k+1}\leq a_{k}$ and $b_{k+1} \geq b_{k}$. To guarantee this, the following simple condition on $f(x)$ should be satisfied:
 
@@ -356,6 +356,9 @@ $$
 \end{algorithmic}
 \end{algorithm}
 
+Computation of second and further principal components follows the standard deflation approach: projections of data points onto the previously computed component are subtracted from the data set, and the algorithm is applied to the residues. However, as it is the case in any non-quadratic metrics, the resulting components can not be orthogonal anymore.
+Moreover, unlike $L2$-based principal components, the algorithm \ref{PQSQ_PC1} does not always converge to a unique global minimum; the computed components can depend on the initial estimate of $\vec{V}$. The situation is somewhat similar to the standard $k$-means algorithm. Therefore, in order to achieve the least possible approximation error to the linear subspace, $\vec{V}$ can be initialized randomly or by data vectors $\vec{x}_i$ many times and the deepest in PQSQ approximation error (\ref{distance_function}) minimum should be selected.
+
 
 \subsection{PQSQ-based Principal Graphs and Manifolds}
 
@@ -402,7 +405,7 @@ In further examples, we use (\ref{characteristic_distance_amplitude}) and (\ref{
 
 \subsection{Implementation}
 
-At https://github.com/auranic/PQSQ-DataApproximators we provide sample code implementing PQSQ approximators (in particular, PCA) in Matlab. We also provide Java implementation of PQSQ-based approximators (PCA, principal graphs) as a part of \emph{vdaoengine} library at https://github.com/auranic/VDAOEngine. The code is accompanied by examples of application.
+At https://github.com/auranic/PQSQ-DataApproximators we provide implementation of PQSQ approximators (in particular, PCA) in Matlab. We also provide Java implementation of PQSQ-based approximators (PCA, principal graphs) as a part of \emph{vdaoengine} library at https://github.com/auranic/VDAOEngine. The code is accompanied by examples of application.
 
 
 
