@@ -162,18 +162,18 @@ Data dimension reduction by constructing low-dimensional approximators of finite
 We solve the problem of approximating a finite set of vectors ${\vec{x}_i}\in R^m,i=1...N$ (data set) by a simpler object $L$ embedded into the data space, such that for each point $\vec{x}_i$ an approximation error $err(\vec{x}_i,L)$ function can be defined. We assume this function in the form
 
 \begin{equation}\label{distance_function}
-err(\vec{x}_i,L) = \min_{y\in L} \sum_k f(x_i^k-y^k),
+err(\vec{x}_i,L) = \min_{y\in L} \sum_k u(x_i^k-y^k),
 \end{equation}
 
-\noindent where the upper $k=1...m$ stands for the coordinate index, and $f(x)$ is a monotonously growing symmetrical function, which we will be calling the energy potential. By data approximation we mean that the configuration of $L$ in the data space minimizes the energy
+\noindent where the upper $k=1...m$ stands for the coordinate index, and $u(x)$ is a monotonously growing symmetrical function, which we will be calling the energy potential. By data approximation we mean that the configuration of $L$ in the data space minimizes the energy
 
 $$
 \sum_i err(\vec{x}_i,L) \rightarrow \min.
 $$
 
-The simplest form of the energy potential is quadratic $f(x)=x^2$, which leads to the most known data approximators: mean point ($L$ is a point), principal points ($L$ is a set of points) \cite{???}, principal components ($L$ is a line or a hyperplane). In more advanced cases, $L$ can posses some regular properties leading to principal curves ($L$ is a smooth line or spline), principal manifolds ($L$ is a smooth low-dimensional surface) and principal graphs (eg., $L$ is a pluri-harmonic graph embedment) \cite{Gorban2009}.
+The simplest form of the energy potential is quadratic $u(x)=x^2$, which leads to the most known data approximators: mean point ($L$ is a point), principal points ($L$ is a set of points) \cite{???}, principal components ($L$ is a line or a hyperplane). In more advanced cases, $L$ can posses some regular properties leading to principal curves ($L$ is a smooth line or spline), principal manifolds ($L$ is a smooth low-dimensional surface) and principal graphs (eg., $L$ is a pluri-harmonic graph embedment) \cite{Gorban2009}.
 
-There exist multiple advantages of using quadratic potential $f(x)$, because it leads to the most computationally efficient algorithms usually based on a splitting schema, a variant of Expectation-Minimization approach \cite{Gorban2009}. For example, $k$-means algorithm solves the problem of finding the set of principal points and the standard iterative Singular Value Decomposition finds principal components. However, quadratic potential is known to be sensitive to outliers in the data set.
+There exist multiple advantages of using quadratic potential $u(x)$, because it leads to the most computationally efficient algorithms usually based on a splitting schema, a variant of Expectation-Minimization approach \cite{Gorban2009}. For example, $k$-means algorithm solves the problem of finding the set of principal points and the standard iterative Singular Value Decomposition finds principal components. However, quadratic potential is known to be sensitive to outliers in the data set.
 
 Iteratively reweighted least squares \cite{Lu2015}. A Pure L1-norm Principal Component Analysis \cite{Brooks2013}.
 
@@ -243,13 +243,13 @@ to the functional quadratically with coefficient $a_s^k$. This is a quadratic op
 
 \subsection{Mean value and $k$-means clustering in PQSQ approximation measure}
 
-Mean vector $\bar{X}_L$  for a set of vectors $X=\{x_i^k\}$, $i=1...N, k=1...m$ and an approximation error defined by potential $f(x)$ can be defined as a point minimizing the mean energy potential for all points in  $X$:
+Mean vector $\bar{X}_L$  for a set of vectors $X=\{x_i^k\}$, $i=1...N, k=1...m$ and an approximation error defined by potential $u(x)$ can be defined as a point minimizing the mean energy potential for all points in  $X$:
 
 \begin{equation}
 \sum_i\sum_k f(x_i^k-\bar{X}^k) \rightarrow \min.
 \end{equation}
 
-For Euclidean metrics $L_2$ ($f(x)=x^2$) it is the usual arithmetric mean, for $L_1$ metrics ($f(x)=|x|$) this is a vector of median values.
+For Euclidean metrics $L_2$ ($u(x)=x^2$) it is the usual arithmetric mean, for $L_1$ metrics ($u(x)=|x|$) this is a vector of median values.
 
 For PQSQ approximation measure (\ref{PQSQ_f}) there is no simple explicit formula for computing the mean value.  In order to find a point $\bar{X}_{PQSQ}$ minimizing mean $PQSQ$ potential, a simple iterative algorithm can be used:
 
@@ -311,7 +311,7 @@ Accordingly to the classical definition of the first principal component, it is 
 u_i = \arg \min_s \sum_k f(x_i^k-V^ks-\delta^k).
 \end{equation}
 
-The standard first principal component (PC1) corresponds to $f(x)=x^2$ when the vectors $\vec{V}, \vec{\delta}$ can be found by a simple iterative splitting algorithm for Singular Value Decomposition (SVD). If $X$ does not contain missing values then $\vec{\delta}$ is the vector of arithmetic mean values. By contrast, computing $L1$-based principal components ($f(x)=|x|$) represents a much more challenging optimization problem \cite{Brooks2013}. Several approximative algorithms for computing $L1$-norm PCA have been recently suggested and benchmarked \cite{}. There was no general efficient algorithm suggested for computing PCA in case of arbitrary approximation measure for some monotonous function $f(x)$.
+The standard first principal component (PC1) corresponds to $u(x)=x^2$ when the vectors $\vec{V}, \vec{\delta}$ can be found by a simple iterative splitting algorithm for Singular Value Decomposition (SVD). If $X$ does not contain missing values then $\vec{\delta}$ is the vector of arithmetic mean values. By contrast, computing $L1$-based principal components ($u(x)=|x|$) represents a much more challenging optimization problem \cite{Brooks2013}. Several approximative algorithms for computing $L1$-norm PCA have been recently suggested and benchmarked \cite{}. There was no general efficient algorithm suggested for computing PCA in case of arbitrary approximation measure for some monotonous function $u(x)$.
 
 Computing PCA based on PQSQ approximation error is only slightly more complicated than computing the standard $L2$ PCA by SVD. We provide a pseudo-code (\textbf{Algorithm \ref{PQSQ_PC1}}) of a simple iterative algorithm (similar to \textbf{Algorithm \ref{PQSQ_Mean_Algorithm}}) with guaranteed convergence.
 
@@ -356,7 +356,7 @@ $$
 \end{algorithmic}
 \end{algorithm}
 
-Computation of second and further principal components follows the standard deflation approach: projections of data points onto the previously computed component are subtracted from the data set, and the algorithm is applied to the residues. However, as it is the case in any non-quadratic metrics, the resulting components can not be orthogonal anymore. 
+Computation of second and further principal components follows the standard deflation approach: projections of data points onto the previously computed component are subtracted from the data set, and the algorithm is applied to the residues. However, as it is the case in any non-quadratic metrics, the resulting components can not be orthogonal anymore.
 Moreover, unlike $L2$-based principal components, the algorithm \ref{PQSQ_PC1} does not always converge to a unique global minimum; the computed components can depend on the initial estimate of $\vec{V}$. The situation is somewhat similar to the standard $k$-means algorithm. Therefore, in order to achieve the least possible approximation error to the linear subspace, $\vec{V}$ can be initialized randomly or by data vectors $\vec{x}_i$ many times and the deepest in PQSQ approximation error (\ref{distance_function}) minimum should be selected.
 
 
@@ -373,7 +373,7 @@ Moreover, unlike $L2$-based principal components, the algorithm \ref{PQSQ_PC1} d
 The main parameters of PQSQ are (a) majorating function $f(x)$ and (b) decomposition of each coordinate range into $p+1$ non-overlapping intervals.
 Depending on these parameters, various approximation error properties can be exploited, including robustness to outlier data points.
 
-When defining the intervals $r_j, j=1\dots p$, it is desirable to achieve a small difference between $f(\Delta x)-u(\Delta x)$ for expected argument values $\Delta x$ (differences between an estimator and the data points), and choose the suitable value of the potential trimming threshold $r_p$ in order to achieve the desired robustness properties. If no trimming is needed, then $r_p$ should be made larger than the maximum expected difference between coordinate values.
+When defining the intervals $r_j, j=1\dots p$, it is desirable to achieve a small difference between $u(\Delta x)-u(\Delta x)$ for expected argument values $\Delta x$ (differences between an estimator and the data points), and choose the suitable value of the potential trimming threshold $r_p$ in order to achieve the desired robustness properties. If no trimming is needed, then $r_p$ should be made larger than the maximum expected difference between coordinate values.
 
 In our numerical experiments we used the following definition of intervals. For any data coordinate $k$, we define a characteristic difference $D^k$, for example
 
@@ -416,7 +416,7 @@ Comparison PQSQ-based PCA with standard quadratic metrics algorithm for computin
 
 \subsection{Robust principal components, approximating $L1$-based PCA}
 
-Comparison of computation time and precision PQSQ-based PCA for $f(x)=|x|$ with $L1$-based PCA (pcaL1 R implementation by Brooks et al.). See
+Comparison of computation time and precision PQSQ-based PCA for $u(x)=|x|$ with $L1$-based PCA (pcaL1 R implementation by Brooks et al.). See
 http://www.optimization-online.org/DB\_FILE/2012/04/3436.pdf for possible benchmarking.
 
 
