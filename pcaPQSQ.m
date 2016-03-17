@@ -43,7 +43,8 @@ function [V,U,C,D] = pcaPQSQ(x, ncomp, varargin)
 
 
         %calculate central point
-        C = PQSQ_Mean(x,intervals,potential_function_handle);
+        %C = PQSQ_Mean(x,intervals,potential_function_handle);
+        C = mean(x);
 
         % initiate xwork like x-C
         xwork = bsxfun(@minus,x,C);

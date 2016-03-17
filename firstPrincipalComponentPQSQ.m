@@ -111,7 +111,7 @@ function [V,U,C,explainedVariance,MDS] = firstPrincipalComponentPQSQ(x, interval
         %Copy old vector U
         U1 = U;
         
-        %calculate the matrix of indeces of intervals
+        %calculate the matrix of indices of intervals
         for k=1:m
             %inds = splitPointIntervals(Xc(:,k)-V(k)*U(:),intervals(k,:));
             %[x1cinf,indices,intervals_symm] = prepareForSplitPointIntervalsFast(Xc(:,k)-V(k)*U(:),intervals(k,:));
@@ -137,15 +137,21 @@ function [V,U,C,explainedVariance,MDS] = firstPrincipalComponentPQSQ(x, interval
 
         %Initialize arrays XU and SU
         
-        XU(:)=0;
-        SU(:)=0;
-        for k=1:m
-            XU = XU + A(k,RS(:,k))'.*Xc(:,k)*V(k);
-            SU = SU + A(k,RS(:,k))'*V(k)*V(k);
-        end
-        ind = SU==0;
-        U(ind)=0;
-        U(~ind)=XU(~ind)./SU(~ind);
+%         XU(:)=0;
+%         SU(:)=0;
+%         for k=1:m
+%             XU = XU + A(k,RS(:,k))'.*Xc(:,k)*V(k);
+%             SU = SU + A(k,RS(:,k))'*V(k)*V(k);
+%         end
+%         ind = SU==0;
+%         U(ind)=0;
+%         U(~ind)=XU(~ind)./SU(~ind);
+        
+            %s2 = sqrt(sum(V.^2));
+            %V = V/s2;
+            U = Xc*V;
+        
+        %[U,RS] = optimizeProjections(Xc,V,U,A,intervals_inf,potential_function_handle,100,0.001);
         
         V1=V;
 % This fragment is approximately 25-30 times slower than following new
