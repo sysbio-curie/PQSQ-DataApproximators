@@ -1,4 +1,4 @@
-function res = testSetGenerator( n, m, q, p, mu, f, N)
+function res = testSetGenerator( n, m, q, p, mu, f, N, dirs)
 %testSetGenerator generates test set for comparison of different version of
 %PCA. Resulting matrix res is returned as output argument and is written to
 %disk with file name created by specified ruler
@@ -10,6 +10,7 @@ function res = testSetGenerator( n, m, q, p, mu, f, N)
 %   mu is magnitude of outliers.
 %   f is fraction of outliers.
 %   N number of dataset
+%   dirs is a directory name to store files include last slash: 'dir\'.
 
     %Generate uniformly distributed values U(-0.5,0.5)
     res = rand(n,m)-0.5;
@@ -32,9 +33,9 @@ function res = testSetGenerator( n, m, q, p, mu, f, N)
     end
     
     %Test set is ready. Form file name
-    fname = ['n', num2str(n,'%04.0f'), 'm', num2str(m,'%04.0f'), 'q',...
-        num2str(q), 'p', num2str(p), 'mu', num2str(mu,'%02.0f'), 'f'...
-        '#', num2str(N,'%03.0f')];
+    fname = [dirs, 'n', num2str(n,'%04.0f'), 'm', num2str(m,'%04.0f'), 'q',...
+        num2str(q), 'p', num2str(p), 'mu', num2str(mu,'%02.0f'), 'f',...
+        num2str(f*10,'%02.0f'),'#', num2str(N,'%03.0f')];
     %Save test set into file
     dlmwrite(fname,res,'\t');
 end
