@@ -23,6 +23,7 @@ function [V,U,C,explainedVariance,MDS] = firstPrincipalComponentPQSQ(x, interval
 
     verbose=0;
     eps=0.001;
+    optimizeProjections = 1;
     initiatilization = 0; % 0 - PC1, -1 - random vector, >0 - ith data vector
 %     meanDefined = 0;
 
@@ -33,6 +34,8 @@ function [V,U,C,explainedVariance,MDS] = firstPrincipalComponentPQSQ(x, interval
             eps = varargin{i+1};
         elseif strcmp(varargin{i},'init')
             initiatilization = varargin{i+1};
+        elseif strcmp(varargin{i},'optimize')
+            optimizeProjections = varargin{i+1};
         end
 %         if strcmp(varargin{i},'mean')
 %             meanDefined = 1;
@@ -137,19 +140,27 @@ function [V,U,C,explainedVariance,MDS] = firstPrincipalComponentPQSQ(x, interval
 
         %Initialize arrays XU and SU
         
-%         XU(:)=0;
-%         SU(:)=0;
-%         for k=1:m
-%             XU = XU + A(k,RS(:,k))'.*Xc(:,k)*V(k);
-%             SU = SU + A(k,RS(:,k))'*V(k)*V(k);
-%         end
-%         ind = SU==0;
-%         U(ind)=0;
-%         U(~ind)=XU(~ind)./SU(~ind);
+        XU(:)=0;
+        SU(:)=0;
+        for k=1:m
+            XU = XU + A(k,RS(:,k))'.*Xc(:,k)*V(k);
+            SU = SU + A(k,RS(:,k))'*V(k)*V(k);
+        end
+        ind = SU==0;
+        U(ind)=0;
+        U(~ind)=XU(~ind)./SU(~ind);
+        
+        if(optimizeProjections)
+            C0 = zeros(1,m);
+            for k=1:n
+                U(k) = optimizePQSQ1D(Xc(k,:),V,U(k),C0,intervals,potential_function_handle);
+            end
+        end
         
             %s2 = sqrt(sum(V.^2));
             %V = V/s2;
-            U = Xc*V;
+%%             V = V/norm(V);
+%%             U = Xc*V;
         
         %[U,RS] = optimizeProjections(Xc,V,U,A,intervals_inf,potential_function_handle,100,0.001);
         

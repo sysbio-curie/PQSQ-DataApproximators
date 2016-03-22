@@ -23,6 +23,7 @@ function [V,U,C,D] = pcaPQSQ(x, ncomp, varargin)
     verbose=0;
     intervals = defineIntervals(x,5);
     useJavaImplementation = 0;
+    typeOfProjection = 'PQSQ'; 
 
     for i=1:length(varargin)
         if strcmp(varargin{i},'verbose')
@@ -37,14 +38,17 @@ function [V,U,C,D] = pcaPQSQ(x, ncomp, varargin)
         if strcmp(varargin{i},'potential')
             potential_function_handle = varargin{i+1};
         end
+        if strcmp(varargin{i},'subtract')
+            typeOfProjection = varargin{i+1};
+        end
     end
 
     if ~useJavaImplementation
 
 
         %calculate central point
-        %C = PQSQ_Mean(x,intervals,potential_function_handle);
-        C = mean(x);
+        C = PQSQ_Mean(x,intervals,potential_function_handle);
+        %C = mean(x);
 
         % initiate xwork like x-C
         xwork = bsxfun(@minus,x,C);
@@ -65,10 +69,17 @@ function [V,U,C,D] = pcaPQSQ(x, ncomp, varargin)
             %%%%
             % You might want to use PQSQ-based projections: this should increase precision?
             %%%%%
-            s2 = sqrt(sum(Vi.^2));
-            Vi = Vi/s2;
-            s1 = xwork*Vi;
-            xwork = xwork - s1*Vi';
+            if strcmp(typeOfProjection,'L2')
+                s2 = sqrt(sum(Vi.^2));
+                Vi = Vi/s2;
+                s1 = xwork*Vi;
+                xwork = xwork - s1*Vi';
+            end
+            if strcmp(typeOfProjection,'PQSQ')
+                s2 = sqrt(sum(Vi.^2));
+                Vi = Vi/s2;
+                xwork = xwork - Ui*Vi';
+            end
 
 
         end
