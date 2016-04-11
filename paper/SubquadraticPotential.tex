@@ -61,6 +61,14 @@
 %% for the whole article with \linenumbers after \end{frontmatter}.
 \usepackage{lineno}
 
+\newtheorem{prop}{Proposition}
+\newtheorem{theorem}{Theorem}[section]
+\newenvironment{proof}[1][Proof]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}]}{\end{trivlist}}
+\newenvironment{definition}[1][Definition]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}]}{\end{trivlist}}
+\DeclareMathOperator*{\argmin}{arg\,min}
+
 %% natbib.sty is loaded by default. However, natbib options can be
 %% provided with \biboptions{...} command. Following options are
 %% valid:
@@ -114,7 +122,7 @@
 %% \address{Address\fnref{label3}}
 %% \fntext[label3]{}
 
-\title{Piece-wise quadratic potentials for robust and fast data approximation}
+\title{Piece-wise quadratic lego set for constructing data approximation potentials and their fast optimization}
 
 %% use optional labels to link authors explicitly to addresses:
 %% \author[label1,label2]{<author name>}
@@ -127,12 +135,13 @@
 
 \begin{abstract}
 Data dimension reduction by constructing low-dimensional approximators is one of the most fundamental approaches in data mining.
-Most efficient approximators based on quadratic energy functional are not flexible enough in many circumstances and suffer from sensitivity to outliers,
-which led to introducing other functional forms of energy potential that are usually computationally expensive to minimize.
+Most efficient approximators based on quadratic energy functional are not flexible enough in many circumstances and suffer from sensitivity to outliers
+and dimensionality curse, which led to introducing other functional forms of energy potential that are usually computationally expensive to minimize.
 We suggest using piece-wise quadratic energy potentials of subquadratic growth (PQSQ potentials) that can imitate a variety
-of approximation metrics used in practice, such as the popular $L1$-norm. A family of subquadratic piece-wise potentials are almost as computationally
+of approximation metrics used in practice, such as the popular $L1$-norm or even sub-linear potentials corresponding to fractional norm.
+A family of subquadratic piece-wise potentials are almost as computationally
 efficient in numerical optimization as quadratic ones for the most popular data approximators ($k$-means, principal components, principal graphs),
-converge to the global or local energy minimum, allows flexible choice of data approximation metrics and can be naturally
+has guaranteed convergence to the global or local energy minimum, allows flexible choice of data approximation metrics and can be naturally
 robust to outlier data points. We introduce this family of potentials, provide implementations of several popular data approximators
 exploiting them and do benchmarking.
 \end{abstract}
@@ -157,7 +166,7 @@ data approximation \sep subquadraic potential \sep principal components \sep clu
 \section{Introduction}
 \label{S:1}
 
-Data dimension reduction by constructing low-dimensional approximators of finite set of vectors is one of the most fundamental approach in data analysis. Starting from the classical data approximators such as $k$-means and linear principal components (PCA), multiple generalizations have been suggested in the last decades (principal manifolds, principal graphs, principal trees, etc.)\cite{Gorban2008Principal}.
+Data dimension reduction by constructing explicit low-dimensional approximators of a finite set of vectors is one of the most fundamental approach in data analysis. Starting from the classical data approximators such as $k$-means and linear principal components (PCA) \cite{Pearson1901On}, multiple generalizations have been suggested in the last decades (self-organizing maps, principal curves, principal manifolds, principal graphs, principal trees, etc.)\cite{Gorban2009,Gorban2008Principal}.
 
 We solve the problem of approximating a finite set of vectors ${\vec{x}_i}\in R^m,i=1...N$ (data set) by a simpler object $L$ embedded into the data space, such that for each point $\vec{x}_i$ an approximation error $err(\vec{x}_i,L)$ function can be defined. We assume this function in the form
 
@@ -171,11 +180,16 @@ $$
 \sum_i err(\vec{x}_i,L) \rightarrow \min.
 $$
 
-The simplest form of the energy potential is quadratic $u(x)=x^2$, which leads to the most known data approximators: mean point ($L$ is a point), principal points ($L$ is a set of points) \cite{???}, principal components ($L$ is a line or a hyperplane). In more advanced cases, $L$ can posses some regular properties leading to principal curves ($L$ is a smooth line or spline), principal manifolds ($L$ is a smooth low-dimensional surface) and principal graphs (eg., $L$ is a pluri-harmonic graph embedment) \cite{Gorban2009}.
+The simplest form of the energy potential is quadratic $u(x)=x^2$, which leads to the most known data approximators: mean point ($L$ is a point), principal points ($L$ is a set of points) \cite{Flury1990}, principal components ($L$ is a line or a hyperplane) \cite{Pearson1901On}. In more advanced cases, $L$ can posses some regular properties leading to principal curves ($L$ is a smooth line or spline) \cite{Hastie1984}, principal manifolds ($L$ is a smooth low-dimensional surface) and principal graphs (eg., $L$ is a pluri-harmonic graph embedment) \cite{gorban2007topological,Gorban2009}.
 
-There exist multiple advantages of using quadratic potential $u(x)$, because it leads to the most computationally efficient algorithms usually based on a splitting schema, a variant of Expectation-Minimization approach \cite{Gorban2009}. For example, $k$-means algorithm solves the problem of finding the set of principal points and the standard iterative Singular Value Decomposition finds principal components. However, quadratic potential is known to be sensitive to outliers in the data set.
+There exist multiple advantages of using quadratic potential $u(x)$, because it leads to the most computationally efficient algorithms usually based on a splitting schema, a variant of Expectation-Minimization approach \cite{Gorban2009}. For example, $k$-means algorithm solves the problem of finding the set of principal points and the standard iterative Singular Value Decomposition finds principal components. However, quadratic potential is known to be sensitive to outliers in the data set. Also, purely quadratic potentials can suffer from the curse of dimensionality, not being able to distinguish ``close" and ``distant" point neighbours in a high-dimensional space \cite{???}.
 
-Iteratively reweighted least squares \cite{Lu2015}. A Pure L1-norm Principal Component Analysis \cite{Brooks2013}.
+There exist several widely used ideas for increasing approximator's robustness in the presence of strong noise in data such as: (1) using medians instead of mean values, (2) substituting Euclidean norm by L1 norm (e.g. \citet{Ding2006, hauberg2014}) and (3) outliers exclusion or fixed weighting or iterative reweighting during the construction of data approximators (e.g. \citet{Xu1995,allende2004robust,kohonen2001self}). In some works, it was suggested to utilize ``trimming'' averages, e.g. in the context of the $k$-means clustering or some generalizations of PCA \citet{cuesta1997,hauberg2014}). In the context of regression, iterative reweighted schemas are exploited to mimic the properties of L1 norm\cite{Lu2015}. Several algorithms for constructing PCA with L1 norm have been suggested \cite{Brooks2013,???,???} and systematically benchmarked\cite{???}. Some authors go even beyond linear metrics and suggests that fractional norms (Lp metrics with $p<1$) can be more appropriate in high-dimensional data approximation \cite{}.
+
+However, most of the suggested approaches exploiting properties of non-quadratic metrics either represent useful but still arbitrary heuristics or are not sufficiently scalable. For example, the standard approach for minimizing L1-based norm consists in solving a linear programming task \cite{}. Despite existence of many efficient linear programming optimizer implementations, by their nature these computations are much slower than the iterations used in the standard SVD algorithm or k-means.
+
+In this paper, we exploit the fact that finding a minimum of a piece-wise quadratic function, or, in other words, a function which is the {\it minorant of a set of quadratic functionals}, can be almost as computationally efficient as optimizing the standard quadratic potential. Therefore, if a given arbitrary potential (such as L1-based or even fractional norm-based) can be approximated by a piece-wise quadratic function, this should lead to relatively efficient and simple optimization algorithms. It appears that only potentials of quadratic or subquadratic growth are possible in this approach: however, these are the most usefull ones in data analysis. We introduce a rich family of piece-wise quadratic potentials of subquadratic growth (PQSQ-potentials), suggest general approach for their optimization, prove convergence of a simple iterative algorithm in the most general case, and provide implementations of the standard data approximators (mean point, $k$-means, principal components) using a PQSQ potential. In addition, we discuss exploiting similar approach in non-linear data approximation (i.e. principal manifolds and graphs) and regularized regression (i.e., lasso and elastic nets).
+
 
 \section{Piecewise quadratic potential of subquadratic growth (PQSQ)}
 \label{S:2}
@@ -186,9 +200,9 @@ Let us split all non-negative numbers $x\in R_{\geq 0}$ into $p+1$ non-intersect
 
 \begin{equation}\label{PQSQ_f}
 u(x)=
-\begin{cases}
+%\begin{cases}
 b_k+a_kx^2, \mbox{if } r_k \leq |x|<r_{k+1}, k=0...p,
-\end{cases}
+%\end{cases}
 \end{equation}
 
 \begin{equation}\label{PQSQ_acoeffs}
@@ -199,7 +213,7 @@ a_k = \frac{f(r_k)-f(r_{k+1})}{r_k^2-r_{k+1}^2},
 b_k = \frac{f(r_{k+1})r_k^2-f(r_{k})r_{k+1}^2}{r_k^2-r_{k+1}^2}
 \end{equation}
 
-\noindent where $f(x)$ is the majorating function, which is to be approximated (imitated) by $u(x)$. For example, in the simplest case $f(x)$ can be a linear function : $f(x)=x$, in this case, $\sum_k u(x^k)$ will approximate the $L1$-norm.
+\noindent where $f(x)$ is a majorating function, which is to be approximated (imitated) by $u(x)$. For example, in the simplest case $f(x)$ can be a linear function: $f(x)=x$, in this case, $\sum_k u(x^k)$ will approximate the $L1$-based error function.
 
 Note that accordingly to (\ref{PQSQ_acoeffs},\ref{PQSQ_bcoeffs}), $b_0=0, a_p=0, b_p=f(r_p)$. Therefore, the choice of $r_p$ can naturally create a ``trimmed'' version of energy potential $u(x)$ such that some data points (outliers) would not have any contribution to the gradient of $u(x)$, hence, will not affect the optimization procedure.
 
@@ -219,7 +233,7 @@ f'>0, \>\>\> f''x \leq f',
 
 \subsection{Basic approach for optimization}
 
-The definition of approximation error (\ref{distance_function}) implies that any optimization procedure based on this approximation measure can be done independently for each coordinate. Two auxiliary objects should be pre-computed to apply PQSQ potential in data analysis:
+The definition of approximation error (\ref{distance_function}) implies that any optimization procedure based on this approximation measure can be done independently for each coordinate. In order to use the PQSQ potential in an algorithm, two ingredients should be pre-computed:
 
 (1) set of $p$ interval thresholds $r_s^k, s=1...p$ for each coordinate $k=1...m$.
 
@@ -238,20 +252,116 @@ Minimization of PQSQ-based functional consists in two steps:
 (2) Minimize PQSQ-based functional for each coordinate $k$ independently, where each set of points $\{x_{i\in \mathcal{R}_s^k}\}$ contributes
 to the functional quadratically with coefficient $a_s^k$. This is a quadratic optimization task.
 
-(3) Repeat (1)-(2) till convergence which is guaranteed by the definition (\ref{PQSQ_f}) of $u(x)$.
+(3) Repeat (1)-(2) till convergence. 
 
+
+\subsection{General theory of the piece-wise quadratic potential as the cone of minorant functions}\label{ConvergenceSection}
+
+In order to deal in most general terms with the data approximation algorithms based on PQSQ potentials, let us consider even more general case where a potential can be constructed from a set of functions $\{q_i(x)\}$ with only two requirements: 1) that each $q_i(x)$ has a (local) minimum; 2) that the whole set of all possible $q_i(x)$s forms a cone. In this case, instead of the operational definition (\ref{PQSQ_f}) it is convenient to define the potential $u(x)$ as a minorant function for a set of functions as follows. For convenience, in this section, $x$ will notify a vector $\vec{x}\in R^m$.
+
+Let us consider {\it a generating cone of functions} $Q$. We remind that the definition of a cone implies that for any $q(x)\in Q, p(x)\in Q$, we have $\alpha q(x)+\beta p(x)\in Q$, where $\alpha\geq 0, \beta \geq 0$.
+
+For any finite set of functions ${q_1(x)\in Q, q_2(x)\in Q,..., q_s(x)\in Q}$, we define a minorant function (Figure \ref{OptimizationFigure}):
+
+\begin{equation}\label{minorant}
+u_{q_1,q_2,...,q_s}(x) = \min(q_1(x),q_2(x),...,q_s(x)).
+\end{equation}
+
+It is convinient to introduce a multiindex $I_{q_1,q_2,...,q_s}(x)$ indicating which particular function(s) $q_i$ corresponds to the value of $u(x)$, i.e.
+
+\begin{equation}\label{minorant_index}
+I_{q_1,q_2,...,q_s}(x) = \{i|u_{q_1,q_2,...,q_s}(x)=q_i(x)\}.
+\end{equation}
+
+For a cone $Q$ let us define a set of all possible minorant functions $\mathbb{M}(Q)$
+
+\begin{equation}\label{minorant_index}
+\mathbb{M}(Q) = \{ u_{q_{i_1},q_{i_2},...,q_{i_n}} | q_{i_1}\in Q, q_{i_2}\in Q, q_{i_n}\in Q, n = 1,2,3,\dots \}.
+\end{equation}
+
+\begin{prop}\label{Misacone}
+$\mathbb{M}(Q)$ is a cone.
+\end{prop}
+\begin{proof}
+For any two minorant functions $u_{q_{i_1},q_{i_2},...,q_{i_k}}, u_{q_{j_1},q_{j_2},...,q_{j_s}}\in \mathbb{M}(Q)$ we have
+$$
+\alpha u_{q_{i_1},q_{i_2},...,q_{i_k}} + \beta u_{q_{j_1},q_{j_2},...,q_{j_s}} = u_{\{\alpha q_{i_p}+\beta q_{j_r}\}} \in \mathbb{M}(Q), p=1,\dots,k, r=1,\dots,s,
+$$
+
+\noindent where ${\{\alpha q_{i_p}+\beta q_{j_r}\}}$ is a set of all possible linear combinations of functions from $\{q_{i_1},q_{i_2},...,q_{i_k}\}$ and $\{q_{j_1},q_{j_2},...,q_{j_s}\}$.
+\end{proof}
+
+\begin{prop}\label{Mrestrictedisacone}
+Any restriction of $\mathbb{M}(Q)$ onto a linear manifold $L$ is a cone.
+\end{prop}
+\begin{proof}
+Let us denote $q(x)|_L$ a restriction of $q(x)$ function onto $L$, i.e. $q(x)|_L = \{q(x)|x\in L\}$. $q(x)|_L$ is a part of $Q$.
+Set of all $q(x)|_L$ forms a restriction $Q|_L$ of $Q$ onto $L$. $Q|_L$ is a cone, hence, $\mathbb{M}(Q)|_L = \mathbb{M}(Q|_L)$ is a cone (Proposition \ref{Misacone}).
+\end{proof}
+
+\begin{definition}{\it Splitting algorithm} minimizing $u_{q_{1},q_{2},...,q_{n}}(x)$ is defined as follows.
+\end{definition}
+
+\begin{algorithm}
+\caption{Finding local minimum of minorant function $u_{q_{1},q_{2},...,q_{n}}(x)$}\label{MinorantMinimum}
+\begin{algorithmic}[1]
+\Procedure{Minimizing minorant function}{}
+\State $\textit{initialize } x \gets x_0$
+\BState \emph{repeat utill stopping criterion has been met}:
+\State $\textit{compute multiindex } I_{q_1,q_2,...,q_s}(x)$
+\State \textbf{for all } $i\in I_{q_1,q_2,...,q_s}(x)$
+\State $x_i = \argmin\,q_i(x)$
+\State \textbf{end for}
+\State $\textit{select optimal } x_i, x_{opt} \gets \argmin_{x_i} u(x_i)$
+\State $x \gets x_{opt}$
+\State $\textit{stopping criteria:}$ check if the multiindex
+$I_{q_1,q_2,...,q_s}(x)$ does not change compared
+to the previous iteration
+\BState \emph{end repeat}:
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
+
+\begin{theorem}\label{theoremConvergence} Splitting algorithm (Algorithm \ref{MinorantMinimum}) for minimizing $u_{q_{1},q_{2},...,q_{n}}(x)$ converges in a finite number of steps.
+\end{theorem}
+\begin{proof}
+Since the set of functions $\{q_{1},q_{2},...,q_{n}\}$ is finite then we only have to show that at each step the value of the function $u_{q_{1},q_{2},...,q_{n}}(x)$ can not increase. For any $x$ and the value $x' = \argmin q_i(x)$ for $i\in I_{q_1,q_2,...,q_s}(x)$ we can have only two cases:
+
+(1) Either $I_{q_1,q_2,...,q_s}(x)=I_{q_1,q_2,...,q_s}(x')$ (convergence, and in this case $q_{i'}(x')=q_i(x)$ for any $i'\in I_{q_1,q_2,...,q_s}(x')$);
+
+(2) Or $u_{q_{1},q_{2},...,q_{n}}(x)<u_{q_{1},q_{2},...,q_{n}}(x')$ since, accordingly to the definition (\ref{minorant}), $q_{i'}(x')<q_i(x)$, for any $i'\in I_{q_1,q_2,...,q_s}(x'), i\in I_{q_1,q_2,...,q_s}(x)$ (see Figure \ref{OptimizationFigure}).
+\end{proof}
+
+Note that in Algorithm \ref{MinorantMinimum} we do not specify exactly the way to find the local minimum of $q_i(x)$. To be practical, the cone $Q$ should contain only functions for which finding a local minimum is fast and explicit. Evident candidates for this role are positively defined quadratic functionals $q(x)=q_{0}+(\vec{q_1},x)+(x,\mathbb{Q}_2x)$, where $\mathbb{Q}_2$ is a positively defined symmetric matrix. Any minorant function (\ref{minorant}) constructed from positively defined quadratic functions will automatically provide subquadratic growth, since the minorant can not grow faster than any of the quadratic forms by which it is defined.
+
+Operational definition of PQSQ given above (\ref{PQSQ_f}), corresponds to a particular form of the quadratic functional, with $\mathbb{Q}_2$ being diagonal matrix. This choice corresponds to coordinate-wise definition of data approximation error function (\ref{distance_function}) that are particularly simple to minimize. This circumstance is used in Algorithms \ref{PQSQ_Mean_Algorithm},\ref{PQSQ_PC1}.
+
+Let us finally clarify how the Algorithm \ref{MinorantMinimum} serves a more abstract version of the Algorithms \ref{PQSQ_Mean_Algorithm},\ref{PQSQ_PC1}. For example, the ``variance" function $m(\vec{x})=\frac{1}{N}\sum_j u(\vec{x}_j-\vec{x})$ to be minimized in Algorithm \ref{PQSQ_Mean_Algorithm} uses the generating functions in the form $Q = \{b_{ji}^k+\sum_k a_{ji}^k(x^k-x_j^k)^2\}$, where $i$ is the index of the interval in (\ref{PQSQ_f}). Hence, $m(x)$ is a minorant function, belonging to the cone $\mathbb{M}(Q)$, and must converge (to a local minimum) in a finite number of steps accordingly to Theorem \ref{theoremConvergence}.
+
+\begin{figure}[h]
+\centering\includegraphics[width=0.8\linewidth]{OptimizationAlgorithm.eps}
+\caption{Optimization of a one-dimensional minorant function $u(x)$, defined by three functions $q_1(x),q_2(x),q_3(x)$ each of which has a local     minimum.
+Each optimization step consists in determining which $q_{I(x)}(x)=u(x)$ and making a step into the local minimum of $q_{I(x)}$. \label{OptimizationFigure}}
+\end{figure}
+
+
+\section{Commonly used data approximators with PQSQ potential}
 
 \subsection{Mean value and $k$-means clustering in PQSQ approximation measure}
 
 Mean vector $\bar{X}_L$  for a set of vectors $X=\{x_i^k\}$, $i=1...N, k=1...m$ and an approximation error defined by potential $u(x)$ can be defined as a point minimizing the mean energy potential for all points in  $X$:
 
-\begin{equation}
+\begin{equation}\label{meanDef}
 \sum_i\sum_k f(x_i^k-\bar{X}^k) \rightarrow \min.
 \end{equation}
 
-For Euclidean metrics $L_2$ ($u(x)=x^2$) it is the usual arithmetric mean, for $L_1$ metrics ($u(x)=|x|$) this is a vector of median values.
+For Euclidean metrics $L_2$ ($u(x)=x^2$) it is the usual arithmetric mean.
 
-For PQSQ approximation measure (\ref{PQSQ_f}) there is no simple explicit formula for computing the mean value.  In order to find a point $\bar{X}_{PQSQ}$ minimizing mean $PQSQ$ potential, a simple iterative algorithm can be used:
+For $L_1$ metrics ($u(x)=|x|$), (\ref{meanDef}) leads to the implicit equation $\#(x_i^k>\bar{X}^k)=\#(x_i^k<\bar{X}^k)$, where $\#$ stands for the number of points, which corresponds to the definition of median. This equation can not have a unique solution in case of even number of points or when some data point coordinates coincide: therefore, definition of median is usually accompanied by heuristics used for breaking ties, i.e. to deal with non-uniquely defined rankings. This situation reflects the general situation of existence of multiple local minimuma and possible non-uniqueness of global minimum of (\ref{meanDef}) (Figure~\ref{MeanValueFigure}).
+
+For PQSQ approximation measure (\ref{PQSQ_f}) it is difficult to write down an explicit formula for computing the mean value
+corresponding to the global minimum of (\ref{meanDef}).
+In order to find a point $\bar{X}_{PQSQ}$ minimizing mean $PQSQ$ potential, a simple iterative algorithm can be used:
 
 %%\begin{algorithm}
 %%\caption{Computing PQSQ mean value}\label{PQSQ_mean}
@@ -295,7 +405,15 @@ $$\mathcal{R}_s^k=\{i: r_{s}^k \leq |x_i^k-\bar{X}_{PQSQ}^k| < r_{s+1}^k\}, s = 
 \end{algorithmic}
 \end{algorithm}
 
+The suggested algorithm converges only to the local minimum which depends on the initial point approximation.
+
 Based on the PQSQ approximation measure and the algorithm for computing the PQSQ mean value (\ref{PQSQ_Mean_Algorithm}), one can construct the PQSQ-based $k$-means clustering procedure in the usual way, splitting estimation of cluster centroids given partitioning of the data points into $k$ disjoint groups, and then re-calculating the partitioning using the PQSQ-based proximity measure.
+
+\begin{figure}[h]
+\centering\includegraphics[width=0.9\linewidth]{MeanValue.eps}
+\caption{Minimizing the error to a point (finding the mean value) for a set of 4 points (shown by black circles). Solid red line corresponds to L1-based error. Thing blue lines correspond to PQSQ error potential imitating the L1-based error. Several choices of PQSQ potential for different numbers of intervals (indicated by a number put on top of the line) is illustrated. On the right a zoom of a particular region of the plot on the left is shown. Neither function (L1-based or PQSQ-based) possesses a unique global minimum. Moreover, L1-based error function has infinite number of points corresponding to the global minimum (any number between 3 and 4), while PQSQ error function has several local minimuma in [3;4] which exact positions are sensitive to the concrete choice of PQSQ parameters (interval definitions).}\label{MeanValueFigure}
+\end{figure}
+
 
 \subsection{Principal Component Analysis (PCA) in PQSQ metrics}
 
@@ -313,7 +431,7 @@ u_i = \arg \min_s \sum_k f(x_i^k-V^ks-\delta^k).
 
 The standard first principal component (PC1) corresponds to $u(x)=x^2$ when the vectors $\vec{V}, \vec{\delta}$ can be found by a simple iterative splitting algorithm for Singular Value Decomposition (SVD). If $X$ does not contain missing values then $\vec{\delta}$ is the vector of arithmetic mean values. By contrast, computing $L1$-based principal components ($u(x)=|x|$) represents a much more challenging optimization problem \cite{Brooks2013}. Several approximative algorithms for computing $L1$-norm PCA have been recently suggested and benchmarked \cite{}. There was no general efficient algorithm suggested for computing PCA in case of arbitrary approximation measure for some monotonous function $u(x)$.
 
-Computing PCA based on PQSQ approximation error is only slightly more complicated than computing the standard $L2$ PCA by SVD. We provide a pseudo-code (\textbf{Algorithm \ref{PQSQ_PC1}}) of a simple iterative algorithm (similar to \textbf{Algorithm \ref{PQSQ_Mean_Algorithm}}) with guaranteed convergence.
+Computing PCA based on PQSQ approximation error is only slightly more complicated than computing the standard $L2$ PCA by SVD. Here we provide a pseudo-code (\textbf{Algorithm \ref{PQSQ_PC1}}) of a simple iterative algorithm (similar to \textbf{Algorithm \ref{PQSQ_Mean_Algorithm}}) with guaranteed convergence (see Section \ref{ConvergenceSection}).
 
 \begin{algorithm}
 \caption{Computing PQSQ PCA}\label{PQSQ_PC1}
@@ -333,7 +451,7 @@ $$\mathcal{R}_s^k=\{i: r_{s}^k \leq |x_i^k-V^ku_i-\delta^k| < r_{s+1}^k\}, s = 0
 \State \textbf{for each } \textit{data point } $i$ and \textit{coordinate } $k$
 %\State \textit{compute new approximation for } $\{u_i\}$:
 \State \textit{find all $s_{i,k}$ such that $i\in \mathcal{R}_{s_{i,k}}^k$}
-\State \textbf{if}\textit{ all $a^k_{s_{i,k}}=0$ \textbf{then} $t'_i \gets 0$} \textbf{else}
+\State \textbf{if}\textit{ all $a^k_{s_{i,k}}=0$ \textbf{then} $u'_i \gets 0$} \textbf{else}
 \State
 $$u'_i \gets \frac{\sum_{k}a_{s_{i,k}}^kV^k(x_i^k-\delta^k)}{\sum_{k}a_{s_{i,k}}^k(V^k)^2}$$
 \State \textbf{end for}
@@ -357,13 +475,11 @@ $$
 \end{algorithm}
 
 Computation of second and further principal components follows the standard deflation approach: projections of data points onto the previously computed component are subtracted from the data set, and the algorithm is applied to the residues. However, as it is the case in any non-quadratic metrics, the resulting components can not be orthogonal anymore.
-Moreover, unlike $L2$-based principal components, the algorithm \ref{PQSQ_PC1} does not always converge to a unique global minimum; the computed components can depend on the initial estimate of $\vec{V}$. The situation is somewhat similar to the standard $k$-means algorithm. Therefore, in order to achieve the least possible approximation error to the linear subspace, $\vec{V}$ can be initialized randomly or by data vectors $\vec{x}_i$ many times and the deepest in PQSQ approximation error (\ref{distance_function}) minimum should be selected.
+Moreover, unlike $L2$-based principal components, the \textbf{Algorithm \ref{PQSQ_PC1}} does not always converge to a unique global minimum; the computed components can depend on the initial estimate of $\vec{V}$. The situation is somewhat similar to the standard $k$-means algorithm. Therefore, in order to achieve the least possible approximation error to the linear subspace, $\vec{V}$ can be initialized randomly or by data vectors $\vec{x}_i$ many times and the deepest in PQSQ approximation error (\ref{distance_function}) minimum should be selected.
 
 
 \subsection{PQSQ-based Principal Graphs and Manifolds}
 
-
-\subsection{Convergence properties}
 
 
 \section{Numerical examples}
@@ -440,7 +556,7 @@ The suggested methodology have several advantages:
 
 One of the application of the suggested methodology is approximating the popular in data mining $L1$ metrics. \myworries{ Does it provide (more) sparsity also compared to L2?} We show by numerical simulations, that PQSQ-based approximators...
 
-PSQS potential can be evidently applied in the task of regression, replacing the classical Least Squares or L1-based Least Absolute Deviation methods.
+PSQS potential can be evidently applied in the task of regression, replacing the classical Least Squares or L1-based Least Absolute Deviation methods. Moreover, PQSQ potential can be easily adapted to the problems of regularized regression with non-quadratic penalty onto the regression coefficients, such as LASSO \cite{} or Elastic net \cite{}.
 
 \bibliographystyle{model1-num-names}
 \bibliography{SubquadraticPotential}
