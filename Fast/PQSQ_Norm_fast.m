@@ -18,7 +18,7 @@ function norm = PQSQ_Norm_fast( x, potentialFunction, ret )
         norm(:,k) = PQSQ_fast(x(:,k),potentialFunction,k);
     end
 
-    if nargin>4 
+    if nargin>2 
         if ret>0
             norm = sum(norm,ret);
         end

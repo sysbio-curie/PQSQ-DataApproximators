@@ -16,8 +16,8 @@ function U = optimizePQSQprojections(x,V,potentialFunction)
             SU(:)=0;
             for j=1:m
                 inds = splitPointIntervalsFast1(x(:,j)-uk.*V(j),potentialFunction.intervals(j,:));
-                XU = XU + potentialFunction.A(j,inds)*(x(:,j))*V(j);
-                SU = SU + potentialFunction.A(j,inds)*V(j)*V(j);
+                XU = XU + potentialFunction.A(j,inds)'.*(x(:,j))*V(j);
+                SU = SU + potentialFunction.A(j,inds)'.*(V(j)*V(j));
             end;
             ind = SU==0;
             uk(ind) = 0;
@@ -38,6 +38,6 @@ function U = optimizePQSQprojections(x,V,potentialFunction)
     %Search minimal positions
     [~, ind] = min(err,[],2);
     %Get projections
-    U = UU(sub2ind([n,m],1:n,ind);
+    U = UU(sub2ind([n,m],(1:n)',ind));
 end
 
