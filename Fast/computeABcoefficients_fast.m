@@ -16,8 +16,8 @@ function [A,B] = computeABcoefficients_fast(intervals, potential_function_handle
     pxk = potential_function_handle(intervals);
     sxk = intervals.^2;
 
-    A(:,1:K-1) = (pxk(:,1:K-1)-pxk(:,2:K))/(sxk(:,1:K-1)-sxk(:,2:K));
-    B(:,1:K-1) = (pxk(:,2:K).*sxk(:,1:K-1)-pxk(:,1:K-1).*sxk(:,2:K))/...
+    A(:,1:K-1) = (pxk(:,1:K-1)-pxk(:,2:K))./(sxk(:,1:K-1)-sxk(:,2:K));
+    B(:,1:K-1) = (pxk(:,2:K).*sxk(:,1:K-1)-pxk(:,1:K-1).*sxk(:,2:K))./...
         (sxk(:,1:K-1)-sxk(:,2:K));
     B(:,K) = pxk(:,K);
 end

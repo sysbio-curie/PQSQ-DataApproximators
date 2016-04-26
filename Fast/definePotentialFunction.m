@@ -24,7 +24,7 @@ function potentialFunction = definePotentialFunction( x, number_of_intervals, po
     intervals = characteristic_distance * row;
     
     potentialFunction.intervals = [intervals, Inf(size(x,2),1)];
-    [potentialFunction.A,potentialFunction.B] = computeABcoefficients(intervals, potential_function_handle);
+    [potentialFunction.A,potentialFunction.B] = computeABcoefficients_fast(intervals, potential_function_handle);
     
     
 
