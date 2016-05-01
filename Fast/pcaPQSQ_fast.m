@@ -24,6 +24,7 @@ function [V,U,C] = pcaPQSQ_fast(x, ncomp, varargin)
 
     verbose=0;
     intervals = 0;
+    number_of_intervals = 5;
     useJavaImplementation = 0;
     typeOfProjection = 'PQSQ';
     num_of_int = 5;
@@ -38,7 +39,15 @@ function [V,U,C] = pcaPQSQ_fast(x, ncomp, varargin)
             useJavaImplementation = 1;
         elseif strcmp(varargin{i},'potential')
             potential_function_handle = varargin{i+1};
+<<<<<<< HEAD
         elseif strcmp(varargin{i},'subtract')
+=======
+        end
+        if strcmp(varargin{i},'number_of_intervals')
+            number_of_intervals = varargin{i+1};
+        end
+        if strcmp(varargin{i},'subtract')
+>>>>>>> origin/master
             typeOfProjection = varargin{i+1};
         elseif strcmp(varargin{i},'numofintervals')
             num_of_int = varargin{i+1};
@@ -50,7 +59,11 @@ function [V,U,C] = pcaPQSQ_fast(x, ncomp, varargin)
     if ~useJavaImplementation
 
         if isscalar(intervals)
+<<<<<<< HEAD
             potentialFunction = definePotentialFunction(x, num_of_int, potential_function_handle, delta);
+=======
+            potentialFunction = definePotentialFunction(x, number_of_intervals, potential_function_handle);
+>>>>>>> origin/master
         end
     
 

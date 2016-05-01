@@ -1,14 +1,14 @@
-\begin{thebibliography}{7}
+\begin{thebibliography}{10}
 \expandafter\ifx\csname natexlab\endcsname\relax\def\natexlab#1{#1}\fi
 \providecommand{\bibinfo}[2]{#2}
 \ifx\xfnm\relax \def\xfnm[#1]{\unskip,\space#1}\fi
-%Type = Book
-\bibitem[{Gorban et~al.(2008)Gorban, Kegl, Wunsch, and
-  Zinovyev}]{Gorban2008Principal}
-\bibinfo{editor}{A.~Gorban}, \bibinfo{editor}{B.~Kegl},
-  \bibinfo{editor}{D.~Wunsch}, \bibinfo{editor}{A.~Zinovyev} (Eds.),
-  \bibinfo{title}{Principal Manifolds for Data Visualisation and Dimension
-  Reduction, LNCSE 58}, \bibinfo{publisher}{Springer}, \bibinfo{year}{2008}.
+%Type = Article
+\bibitem[{Pearson(1901)}]{Pearson1901On}
+\bibinfo{author}{K.~Pearson},
+\newblock \bibinfo{title}{{On lines and planes of closest fit to systems of
+  points in space}},
+\newblock \bibinfo{journal}{Philos. Mag.} \bibinfo{volume}{2}
+  (\bibinfo{year}{1901}) \bibinfo{pages}{559--572}.
 %Type = Article
 \bibitem[{Gorban and Zinovyev(2009)}]{Gorban2009}
 \bibinfo{author}{A.~N. Gorban}, \bibinfo{author}{A.~Zinovyev},
@@ -17,6 +17,33 @@
   Applications and Trends: Algorithms, Methods and Techniques, eds. Olivas
   E.S., Guererro J.D.M., Sober M.M., Benedito J.R.M., Lopes A.J.S.}
   (\bibinfo{year}{2009}).
+%Type = Book
+\bibitem[{Gorban et~al.(2008)Gorban, Kegl, Wunsch, and
+  Zinovyev}]{Gorban2008Principal}
+\bibinfo{editor}{A.~Gorban}, \bibinfo{editor}{B.~Kegl},
+  \bibinfo{editor}{D.~Wunsch}, \bibinfo{editor}{A.~Zinovyev} (Eds.),
+  \bibinfo{title}{Principal Manifolds for Data Visualisation and Dimension
+  Reduction, LNCSE 58}, \bibinfo{publisher}{Springer}, \bibinfo{year}{2008}.
+%Type = Article
+\bibitem[{Flury(1990)}]{Flury1990}
+\bibinfo{author}{B.~Flury},
+\newblock \bibinfo{title}{Principal points},
+\newblock \bibinfo{journal}{Biometrika} \bibinfo{volume}{77}
+  (\bibinfo{year}{1990}) \bibinfo{pages}{33--41}.
+%Type = Article
+\bibitem[{Hastie(1984)}]{Hastie1984}
+\bibinfo{author}{T.~Hastie},
+\newblock \bibinfo{title}{Principal curves and surfaces},
+\newblock \bibinfo{journal}{PhD Thesis, Stanford University, California}
+  (\bibinfo{year}{1984}).
+%Type = Article
+\bibitem[{Gorban et~al.(2007)Gorban, Sumner, and
+  Zinovyev}]{gorban2007topological}
+\bibinfo{author}{A.~N. Gorban}, \bibinfo{author}{N.~R. Sumner},
+  \bibinfo{author}{A.~Y. Zinovyev},
+\newblock \bibinfo{title}{Topological grammars for data approximation},
+\newblock \bibinfo{journal}{Applied Mathematics Letters} \bibinfo{volume}{20}
+  (\bibinfo{year}{2007}) \bibinfo{pages}{382--386}.
 %Type = Article
 \bibitem[{Lu et~al.(2015)Lu, Lin, and Yan}]{Lu2015}
 \bibinfo{author}{C.~Lu}, \bibinfo{author}{Z.~Lin}, \bibinfo{author}{S.~Yan},
@@ -31,13 +58,6 @@
 \newblock \bibinfo{title}{A pure l1-norm principal component analysis.},
 \newblock \bibinfo{journal}{Comput Stat Data Anal} \bibinfo{volume}{61}
   (\bibinfo{year}{2013}) \bibinfo{pages}{83--98}.
-%Type = Article
-\bibitem[{Pearson(1901)}]{Pearson1901On}
-\bibinfo{author}{K.~Pearson},
-\newblock \bibinfo{title}{{On lines and planes of closest fit to systems of
-  points in space}},
-\newblock \bibinfo{journal}{Philos. Mag.} \bibinfo{volume}{2}
-  (\bibinfo{year}{1901}) \bibinfo{pages}{559--572}.
 %Type = Article
 \bibitem[{Yang and Jin(2006)}]{Yang2006}
 \bibinfo{author}{L.~Yang}, \bibinfo{author}{R.~Jin},
