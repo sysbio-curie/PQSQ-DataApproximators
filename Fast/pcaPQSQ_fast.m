@@ -11,6 +11,8 @@ function [V,U,C] = pcaPQSQ_fast(x, ncomp, varargin)
 %       'intervals', intervals serves to specify user defined intervals.
 %               intervals is matrix each row of which corresponds to one
 %               dimension. In each row the first element must be zero.
+%       'numofintervals' specifies the number of intervals.
+%       'intshrinkage' is coefficient for intervals shrinkage.
 %   Output arguments
 %       V is m-by-ncomp matrix of ncomp columns each of which is the
 %           principal component.
@@ -23,37 +25,37 @@ function [V,U,C] = pcaPQSQ_fast(x, ncomp, varargin)
     verbose=0;
     intervals = 0;
     useJavaImplementation = 0;
-    typeOfProjection = 'PQSQ'; 
+    typeOfProjection = 'PQSQ';
+    num_of_int = 5;
+    delta = 1;
 
     for i=1:length(varargin)
         if strcmp(varargin{i},'verbose')
             verbose = varargin{i+1};
-        end
-        if strcmp(varargin{i},'intervals')
+        elseif strcmp(varargin{i},'intervals')
             intervals = varargin{i+1};
-        end
-        if strcmp(varargin{i},'javacode')
+        elseif strcmp(varargin{i},'javacode')
             useJavaImplementation = 1;
-        end
-        if strcmp(varargin{i},'potential')
+        elseif strcmp(varargin{i},'potential')
             potential_function_handle = varargin{i+1};
-        end
-        if strcmp(varargin{i},'subtract')
+        elseif strcmp(varargin{i},'subtract')
             typeOfProjection = varargin{i+1};
+        elseif strcmp(varargin{i},'numofintervals')
+            num_of_int = varargin{i+1};
+        elseif strcmp(varargin{i},'intshrinkage')
+            delta = varargin{i+1};
         end
     end
 
     if ~useJavaImplementation
 
         if isscalar(intervals)
-            potentialFunction = definePotentialFunction(x, 5, potential_function_handle);
+            potentialFunction = definePotentialFunction(x, num_of_int, potential_function_handle, delta);
         end
     
 
         %calculate central point
-        %C = PQSQ_Mean(x,intervals,potential_function_handle);
         C = PQSQ_Mean_fast(x, potentialFunction, varargin);
-        %C = mean(x);
 
         % initiate xwork like x-C
         xwork = bsxfun(@minus,x,C);
@@ -84,9 +86,8 @@ function [V,U,C] = pcaPQSQ_fast(x, ncomp, varargin)
 
     else % java implementation
         if isscalar(intervals)
-            potentialFunction = definePotentialFunction(x, 5, @L2);
+            intervals = defineIntervals(x, num_of_int, delta);
         end
-        intervals = potentialFunction.intervals;
         javaclasspath({'VDAOEngine.jar'});
         pca = vdaoengine.analysis.PCAMethodPQSQ;
         pca.setData(x);
