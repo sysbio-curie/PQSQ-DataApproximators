@@ -168,7 +168,7 @@ data approximation \sep nonquadraic potential \sep principal components \sep clu
 \section{Introduction}
 \label{S:1}
 
-Data dimension reduction by constructing explicit low-dimensional approximators of a finite set of vectors is one of the most fundamental approach in data analysis. Starting from the classical data approximators such as $k$-means and linear principal components (PCA) \cite{Pearson1901On}, multiple generalizations have been suggested in the last decades (self-organizing maps, principal curves, principal manifolds, principal graphs, principal trees, etc.)\cite{Gorban2009,Gorban2008Principal} in order to make the data approximators more flexible and suitable for complex data structures.
+Data dimension reduction by constructing explicit low-dimensional approximators of a finite set of vectors is one of the most fundamental approach in data analysis. Starting from the classical data approximators such as $k$-means \cite{Lloyd1957} and linear principal components (PCA) \cite{Pearson1901On}, multiple generalizations have been suggested in the last decades (self-organizing maps, principal curves, principal manifolds, principal graphs, principal trees, etc.)\cite{Gorban2009,Gorban2008Principal} in order to make the data approximators more flexible and suitable for complex data structures.
 
 We solve the problem of approximating a finite set of vectors ${\vec{x}_i}\in R^m,i=1...N$ (data set) by a simpler object $L$ embedded into the data space, such that for each point $\vec{x}_i$ an approximation error $err(\vec{x}_i,L)$ function can be defined. We assume this function in the form
 
@@ -186,9 +186,9 @@ Note that our definition of error function is coordinate-wise (it is a sum of er
 
 The simplest form of the error potential is quadratic $u(x)=x^2$, which leads to the most known data approximators: mean point ($L$ is a point), principal points ($L$ is a set of points) \cite{Flury1990}, principal components ($L$ is a line or a hyperplane) \cite{Pearson1901On}. In more advanced cases, $L$ can posses some regular properties leading to principal curves ($L$ is a smooth line or spline) \cite{Hastie1984}, principal manifolds ($L$ is a smooth low-dimensional surface) and principal graphs (eg., $L$ is a pluri-harmonic graph embedment) \cite{gorban2007topological,Gorban2009}.
 
-There exist multiple advantages of using quadratic potential $u(x)$, because it leads to the most computationally efficient algorithms usually based on a splitting schema, a variant of Expectation-Minimization approach \cite{Gorban2009}. For example, $k$-means algorithm solves the problem of finding the set of principal points and the standard iterative Singular Value Decomposition finds principal components. However, quadratic potential is known to be sensitive to outliers in the data set. Also, purely quadratic potentials can suffer from the curse of dimensionality, not being able to distinguish ``close" and ``distant" point neighbours in a high-dimensional space \cite{Aggarwal2001}.
+There exist multiple advantages of using quadratic potential $u(x)$, because it leads to the most computationally efficient algorithms usually based on the splitting schema, a variant of Expectation-Minimization approach \cite{Gorban2009}. For example, $k$-means algorithm solves the problem of finding the set of principal points and the standard iterative Singular Value Decomposition finds principal components. However, quadratic potential is known to be sensitive to outliers in the data set. Also, purely quadratic potentials can suffer from the curse of dimensionality, not being able to robustly discriminate ``close" and ``distant" point neighbours in a high-dimensional space \cite{Aggarwal2001}.
 
-There exist several widely used ideas for increasing approximator's robustness in the presence of strong noise in data such as: (1) using medians instead of mean values, (2) substituting quadratic norm by L1 norm (e.g. \cite{Ding2006, hauberg2014}), (3) outliers exclusion or fixed weighting or iterative reweighting during the construction of data approximators (e.g. \cite{Xu1995,Allende2004,kohonen2001self}), and (4) regularizing the PCA vectors by L1 norm \cite{Jolliffe2003,Candes2011,Zou2006}. In some works, it was suggested to utilize ``trimming'' averages, e.g. in the context of the $k$-means clustering or some generalizations of PCA \cite{cuesta1997,hauberg2014}). In the context of regression, iterative reweighted schemas are exploited to mimic the properties of L1 norm \cite{Lu2015}. Several algorithms for constructing PCA with L1 norm have been suggested \cite{Ke2005,Kwak2008,Brooks2013} and systematically benchmarked \cite{brooks2012pcal1,Park2014}. Some authors go even beyond linear metrics and suggests that fractional norms (L$p$ metrics with $p<1$) can be more appropriate in high-dimensional data approximation \cite{Aggarwal2001}.
+There exist several widely used ideas for increasing approximator's robustness in the presence of strong noise in data such as: (1) using medians instead of mean values, (2) substituting quadratic norm by L1 norm (e.g. \cite{Ding2006, hauberg2014}), (3) outliers exclusion or fixed weighting or iterative reweighting during optimizing the data approximators (e.g. \cite{Xu1995,Allende2004,kohonen2001self}), and (4) regularizing the PCA vectors by L1 norm \cite{Jolliffe2003,Candes2011,Zou2006}. In some works, it was suggested to utilize ``trimming'' averages, e.g. in the context of the $k$-means clustering or some generalizations of PCA \cite{cuesta1997,hauberg2014}). In the context of regression, iterative reweighting is exploited to mimic the properties of L1 norm \cite{Lu2015}. Several algorithms for constructing PCA with L1 norm have been suggested \cite{Ke2005,Kwak2008,Brooks2013} and systematically benchmarked \cite{brooks2012pcal1,Park2014}. Some authors go even beyond linear metrics and suggests that fractional norms (L$p$ metrics with $p<1$) can be more appropriate in high-dimensional data approximation \cite{Aggarwal2001}.
 
 However, most of the suggested approaches exploiting properties of non-quadratic metrics either represent useful but still arbitrary heuristics or are not sufficiently scalable. The standard approach for minimizing L1-based norm consists in solving a linear programming task. Despite existence of many efficient linear programming optimizer implementations, by their nature these computations are much slower than the iterative methods used in the standard SVD algorithm or $k$-means.
 
@@ -219,7 +219,7 @@ b_k = \frac{f(r_{k+1})r_k^2-f(r_{k})r_{k+1}^2}{r_k^2-r_{k+1}^2}
 
 \noindent where $f(x)$ is a majorating function, which is to be approximated (imitated) by $u(x)$. For example, in the simplest case $f(x)$ can be a linear function: $f(x)=x$, in this case, $\sum_k u(x^k)$ will approximate the $L1$-based error function.
 
-Note that accordingly to (\ref{PQSQ_acoeffs},\ref{PQSQ_bcoeffs}), $b_0=0, a_p=0, b_p=f(r_p)$. Therefore, the choice of $r_p$ can naturally create a ``trimmed'' version of error potential $u(x)$ such that some data points (outliers) do not have any contribution to the gradient of $u(x)$, hence, will not affect the optimization procedure.
+Note that accordingly to (\ref{PQSQ_acoeffs},\ref{PQSQ_bcoeffs}), $b_0=0, a_p=0, b_p=f(r_p)$. Therefore, the choice of $r_p$ can naturally create a ``trimmed'' version of error potential $u(x)$ such that some data points (outliers) do not have any contribution to the gradient of $u(x)$, hence, will not affect the optimization procedure. However, this set of points can change during minimizaton of the potential.
 
 The condition of subquadratic growth consists in the requirement $a_{k+1}\leq a_{k}$ and $b_{k+1} \geq b_{k}$. To guarantee this, the following simple condition on $f(x)$ should be satisfied:
 
@@ -232,7 +232,7 @@ f'>0, \>\>\> f''x \leq f',
 
 \begin{figure}[h]
 \centering\includegraphics[width=0.9\linewidth]{potential.eps}
-\caption{Trimmed piecewise quadratic potential of subquadratic growth $u(x)$ (solid blue line) defined for the majorating function $f(x)$ (red dashed line) and several thresholds $r_k$. Dotted lines shows the parabolas which fragments are used to construct $u(x)$. The last parabola is flat ($a_p=0$) which corresponds to trimmed potential. \label{potential}}
+\caption{Trimmed piecewise quadratic potential of subquadratic growth $u(x)$ (solid blue line) defined for the majorating function $f(x)$ (red dashed line) and several thresholds $r_k$. Dotted lines show the parabolas which fragments are used to construct $u(x)$. The last parabola is flat ($a_p=0$) which corresponds to trimmed potential. \label{potential}}
 \end{figure}
 
 \subsection{Basic approach for optimization}
@@ -245,7 +245,7 @@ In order to use the PQSQ potential in an algorithm, two ingredients should be pr
 
 Minimization of PQSQ-based functional consists in two steps:
 
-1) For each coordinate $k$, split all data point indices into the non-overlapping sets $\mathcal{R}_s^k$:
+1) For each coordinate $k$, split all data point indices into non-overlapping sets $\mathcal{R}_s^k$:
 
 \begin{equation}
 \mathcal{R}_s^k= \{i: r_{s}^k \leq |x_i^k-\beta^k_i| < r_{s+1}^k\}, s = 0...p,
@@ -258,7 +258,7 @@ to the functional quadratically with coefficient $a_s^k$. This is a quadratic op
 
 3) Repeat (1)-(2) till convergence.
 
-\subsection{General theory of the piece-wise quadratic potential as the cone of minorant functions}\label{ConvergenceSection}
+\section{General theory of the piece-wise convex potentials as the cone of minorant functions}\label{ConvergenceSection}
 
 In order to deal in most general terms with the data approximation algorithms based on PQSQ potentials, let us consider a general case where a potential can be constructed from a set of functions $\{q_i(x)\}$ with only two requirements: 1) that each $q_i(x)$ has a (local) minimum; 2) that the whole set of all possible $q_i(x)$s forms a cone. In this case, instead of the operational definition (\ref{PQSQ_f}) it is convenient to define the potential $u(x)$ as the minorant function for a set of functions as follows. For convenience, in this section, $x$ will notify a vector $\vec{x}\in R^m$.
 
@@ -440,7 +440,7 @@ Accordingly to the classical definition of the first principal component, it is 
 u_i = \arg \min_s \sum_k u(x_i^k-V^ks-\delta^k).
 \end{equation}
 
-The standard first principal component (PC1) corresponds to $u(x)=x^2$ when the vectors $\vec{V}, \vec{\delta}$ can be found by a simple iterative splitting algorithm for Singular Value Decomposition (SVD). If $X$ does not contain missing values then $\vec{\delta}$ is the vector of arithmetic mean values. By contrast, computing $L1$-based principal components ($u(x)=|x|$) represents a much more challenging optimization problem \cite{Brooks2013}. Several approximative algorithms for computing $L1$-norm PCA have been recently suggested and benchmarked \cite{Ke2005,Kwak2008,Brooks2013,brooks2012pcal1,Park2014}. To our knowledge, there was no general efficient algorithm suggested for computing PCA in case of arbitrary approximation measure for some monotonous function $u(x)$.
+The standard first principal component (PC1) corresponds to $u(x)=x^2$ when the vectors $\vec{V}, \vec{\delta}$ can be found by a simple iterative splitting algorithm for Singular Value Decomposition (SVD). If $X$ does not contain missing values then $\vec{\delta}$ is the vector of arithmetic mean values. By contrast, computing $L1$-based principal components ($u(x)=|x|$) represents a much more challenging optimization problem \cite{Brooks2013}. Several approximative algorithms for computing $L1$-norm PCA have been recently suggested and benchmarked \cite{Ke2005,Kwak2008,Brooks2013,brooks2012pcal1,Park2014}. To our knowledge, there have not been a general efficient algorithm suggested for computing PCA in case of arbitrary approximation measure for some monotonous function $u(x)$.
 
 Computing PCA based on PQSQ approximation error is only slightly more complicated than computing the standard $L2$ PCA by SVD. Here we provide a pseudo-code (\textbf{Algorithm \ref{PQSQ_PC1}}) of a simple iterative algorithm (similar to \textbf{Algorithm \ref{PQSQ_Mean_Algorithm}}) with guaranteed convergence (see Section \ref{ConvergenceSection}).
 
@@ -489,8 +489,7 @@ $$
 \end{algorithmic}
 \end{algorithm}
 
-Computation of second and further principal components follows the standard deflation approach: projections of data points onto the previously computed component are subtracted from the data set, and the algorithm is applied to the residues. However, as it is the case in any non-quadratic metrics, the resulting components can be non-orthogonal anymore.
-Moreover, unlike $L2$-based principal components, the \textbf{Algorithm \ref{PQSQ_PC1}} does not always converge to a unique global minimum; the computed components can depend on the initial estimate of $\vec{V}$. The situation is somewhat similar to the standard $k$-means algorithm. Therefore, in order to achieve the least possible approximation error to the linear subspace, $\vec{V}$ can be initialized randomly or by data vectors $\vec{x}_i$ many times and the deepest in PQSQ approximation error (\ref{distance_function}) minimum should be selected.
+Computation of second and further principal components follows the standard deflation approach: projections of data points onto the previously computed component are subtracted from the data set, and the algorithm is applied to the residues. However, as it is the case in any non-quadratic metrics, the resulting components can be non-orthogonal or even not invariant with respect to the dataset rotation. Moreover, unlike $L2$-based principal components, the \textbf{Algorithm \ref{PQSQ_PC1}} do not always converge to a unique global minimum; the computed components can depend on the initial estimate of $\vec{V}$. The situation is somewhat similar to the standard $k$-means algorithm. Therefore, in order to achieve the least possible approximation error to the linear subspace, $\vec{V}$ can be initialized randomly or by data vectors $\vec{x}_i$ many times and the deepest in PQSQ approximation error (\ref{distance_function}) minimum should be selected.
 
 How does the \textbf{Algorithm \ref{MinorantMinimum}} serve a more abstract version of the \textbf{Algorithms \ref{PQSQ_Mean_Algorithm},\ref{PQSQ_PC1}}? For example, the ``variance" function $m(\vec{x})=\frac{1}{N}\sum_j u(\vec{x}_j-\vec{x})$ to be minimized in \textbf{Algorithm \ref{PQSQ_Mean_Algorithm}} uses the generating functions in the form $Q = \{b_{ji}^k+\sum_k a_{ji}^k(x^k-x_j^k)^2\}$, where $i$ is the index of the interval in (\ref{PQSQ_f}). Hence, $m(x)$ is a minorant function, belonging to the cone $\mathbb{M}(Q)$, and must converge (to a local minimum) in a finite number of steps accordingly to Theorem \ref{theoremConvergence}.
 
@@ -613,15 +612,15 @@ the authors on request.
 
 \subsection{Simple benchmark test}
 
-In order to compare the computation time and precision of PQSQ-based PCA algorithm for the case $u(x)=|x|$ with existing R-based implementations of $L1$-based PCA methods (pcaL1 package), we follow the benchmark described in \cite{brooks2012pcal1}. We compare performance of PQSQ-based PCA based on \textbf{Algorithm \ref{PQSQ_PC1}} with several $L1$-based PCA algorithms: L1-PCA* \cite{Brooks2013}, L1-PCA \cite{Ke2005}, PCA-PP \cite{Croux2007}, PCA-L1 \cite{Kwak2008}. As a reference point, we use the standard PCA algorithm based on quadratic norm and computed using the standard SVD iterations. 
+In order to compare the computation time and precision of PQSQ-based PCA algorithm for the case $u(x)=|x|$ with existing R-based implementations of $L1$-based PCA methods (pcaL1 package), we follow the benchmark described in \cite{brooks2012pcal1}. We compare performance of PQSQ-based PCA based on \textbf{Algorithm \ref{PQSQ_PC1}} with several $L1$-based PCA algorithms: L1-PCA* \cite{Brooks2013}, L1-PCA \cite{Ke2005}, PCA-PP \cite{Croux2007}, PCA-L1 \cite{Kwak2008}. As a reference point, we use the standard PCA algorithm based on quadratic norm and computed using the standard SVD iterations.
 
-The idea of benchmarking is to generate a series of datasets of the same size ($N=1000$ objects in $m=10$ dimensions) such that the first 5 dimensions would be sampled from a uniform distribution $U(-10,10)$. Therefore, the first 5 dimensions represent ``true manifold" sampled by points. 
+The idea of benchmarking is to generate a series of datasets of the same size ($N=1000$ objects in $m=10$ dimensions) such that the first 5 dimensions would be sampled from a uniform distribution $U(-10,10)$. Therefore, the first 5 dimensions represent ``true manifold" sampled by points.
 
 The values in the last 5 dimensions represent ``noise+outlier" signal. The background noise is represented by Laplacian distribution of zero mean and 0.1 variance. The outlier signal is characterized by mean value $\mu$, dimension $p$ and frequency $\phi$. Then, for each data point with a probability $\phi$, in the first $p$ outlier dimensions a value is drawn from $Laplace(\mu,0.1)$. The rest of the values is drawn from background noise distribution.
 
-As in \cite{brooks2012pcal1}, we've generated 1300 test sets corresponding to $\phi=0.1$, with 100 examples for each combination of $\mu=1,5,10,25$ and $p=1,2,3$. 
+As in \cite{brooks2012pcal1}, we've generated 1300 test sets corresponding to $\phi=0.1$, with 100 examples for each combination of $\mu=1,5,10,25$ and $p=1,2,3$.
 
-For each test set 5 first principal components $\vec{V}_1,\dots,\vec{V}_{5}$ of unit length were computed, with corresponding point projection distributions $U^1,\dots,U^{5}$ and the mean vector $\vec{C}$. Therefore, for each initial data point $\vec{x}_i$, we have the ``restored" data point $$P(\vec{x}_i)=\sum_{k=1\dots 5}U^k_i\vec{V}_k+\vec{C}.$$ 
+For each test set 5 first principal components $\vec{V}_1,\dots,\vec{V}_{5}$ of unit length were computed, with corresponding point projection distributions $U^1,\dots,U^{5}$ and the mean vector $\vec{C}$. Therefore, for each initial data point $\vec{x}_i$, we have the ``restored" data point $$P(\vec{x}_i)=\sum_{k=1\dots 5}U^k_i\vec{V}_k+\vec{C}.$$
 
 For computing the PQSQ-based PCA we used 5 intervals without trimming. Changing the number of intervals did not significantly varied the benchmarking results.
 
@@ -629,7 +628,7 @@ Two characteristics were measured: (1) computation time measured as a ratio to t
 
 \begin{figure}[h]
 \centering\includegraphics[width=0.8\linewidth]{benchmark.eps}
-\caption{Simple benchmarking of several algorithms for constructing $L1$-based PCA.\label{benchmark}}
+\caption{Simple benchmarking of several algorithms for constructing $L1$-based PCA. The computational cost of application of linear programming methods instead of simpler iterative methods is approximately shown by an arrow. \label{benchmark}}
 \end{figure}
 
 
@@ -639,7 +638,8 @@ Two characteristics were measured: (1) computation time measured as a ratio to t
 
 Formally speaking, $\epsilon$ is $L1$-based from a point projection into the 5 principal components to the ``true" subspace. In simple terms, larger values of $\epsilon$ correspond to the situation when the first 5 principal components do not represent well the first ``true" dimensions, having significant loadings into the ``outlier dimensions". Only if the first 5 components do not have any non-zero loadings in the dimensions $6\dots 10$ then $\epsilon=0$.
 
-The results of the comparison, averaged over all 1300 test sets, are shown in Figure~\ref{benchmark}. As one can see, PQSQ-based computation of PCA outperforms by accuracy the existing heuristics such as PCA-L1 but remains computationally efficient being 100 times faster than L1-PCA giving almost the same accuracy and almost 500 times faster than the L1-PCA* algorithm which is, however, significantly gains in accuracy. 
+The results of the comparison, averaged over all 1300 test sets, are shown in Figure~\ref{benchmark}. As one can see, PQSQ-based computation of PCA outperforms by accuracy the existing heuristics such as PCA-L1 but remains computationally efficient being 100 times faster than L1-PCA giving almost the same accuracy and almost 500 times faster than the L1-PCA* algorithm which is, however, significantly gains in accuracy. From Figure~\ref{benchmark}, one can see that PQSQ-based approach performs the best in terms of the accuracy
+in the family of fast iterative methods.
 
 The detailed tables of comparison for all combinations of parameters are provided in Supplementary Table 1. The scripts used to generate the datasets and compare the results can be found at https://github.com/auranic/PQSQ-DataApproximators.
 
