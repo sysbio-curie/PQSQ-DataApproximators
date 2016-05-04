@@ -109,8 +109,8 @@ function [V,U] = firstPrincipalComponentPQSQ_fast(x, potentialFunction, varargin
         V(ind) = 0;
         V(~ind) = XV(~ind)./SV(~ind);
         
-        %renormalize V1
-        V = V/norm(V1);
+        %renormalize V
+        V = V/norm(V);
         
         delta = (norm(V-V1));
         
