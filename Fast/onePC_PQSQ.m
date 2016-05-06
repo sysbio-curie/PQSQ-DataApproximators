@@ -1,12 +1,10 @@
-function [V,U] = firstPrincipalComponentPQSQ_fast(x, potentialFunction, varargin)
-%firstPrincipalComponentPQSQ calculates the first principal component for
-%specified data matrix x, intervals and potential_function_handle.
-% x is n-by-m matrix with n observations and m attributes.
-% intervals is m-by-(p+1) matrix with (p+1) boundaries of p intervals for
-%   each dimension of data in row.
-% potential_function_handle is handler for energy potential function.
+function [V,U] = onePC_PQSQ(x, potentialFunction, varargin)
+%onePC_PQSQ calculates the first principal component for specified data
+%matrix x and PQSQ potential function
+%   x is n-by-m matrix with n observations and m attributes.
+%   potentialFunction is structure which define PQSQ potential function
+%       (see definePotentialFunction.m for details)
 % Name, Value optionas:
-% 'verbose', 1 is indicator of detailed output (debuging).
 % 'eps', positive number is tolerance level for component calculation.
 % 'init', -1/0/positive number is method of component initialization:
 %               -1 means uniform random generation in interval 0, stdev for
@@ -26,16 +24,12 @@ function [V,U] = firstPrincipalComponentPQSQ_fast(x, potentialFunction, varargin
 %U is n-by-1 vector of length of projections onto found principal
 %   component.
 
-    verbose=0;
     eps=0.001;
     optimizeProjections = 1;
     initiatilization = 0; % 0 - PC1, -1 - random vector, >0 - ith data vector
-%     meanDefined = 0;
 
     for i=1:length(varargin)
-        if strcmp(varargin{i},'verbose')
-            verbose = varargin{i+1};
-        elseif strcmp(varargin{i},'eps')
+        if strcmp(varargin{i},'eps')
             eps = varargin{i+1};
         elseif strcmp(varargin{i},'init')
             initiatilization = varargin{i+1};
@@ -79,7 +73,7 @@ function [V,U] = firstPrincipalComponentPQSQ_fast(x, potentialFunction, varargin
         if optimizeProjections<2
             %calculate the matrix of indices of intervals
             for k=1:m
-                inds = splitPointIntervalsFast1(x(:,k)-V(k)*U(:),potentialFunction.intervals(k,:));
+                inds = identifyIntervals(x(:,k)-V(k)*U(:),potentialFunction.intervals(k,:));
                 RS(:,k) = inds(:);
             end
 
@@ -94,14 +88,14 @@ function [V,U] = firstPrincipalComponentPQSQ_fast(x, potentialFunction, varargin
             U(ind) = 0;
             U(~ind) = XU(~ind)./SU(~ind);
         else
-            U = optimizePQSQprojections(x,V,potentialFunction);
+            U = optimizePQSQprojections(x,V,potentialFunction,eps);
         end
         
         V1=V;
 
-        %calculate the matrix of indices of intervals
+        %calculate indices of intervals and new principal component
         for k=1:m
-            inds = splitPointIntervalsFast1(x(:,k)-V(k)*U(:),potentialFunction.intervals(k,:));
+            inds = identifyIntervals(x(:,k)-V(k)*U(:),potentialFunction.intervals(k,:));
             XV(k) = sum(potentialFunction.A(k,inds)'.*x(:,k).*U(:));
             SV(k) = sum(potentialFunction.A(k,inds)'.*U(:).*U(:));
         end
@@ -129,6 +123,6 @@ function [V,U] = firstPrincipalComponentPQSQ_fast(x, potentialFunction, varargin
     
     %Final projection normalization
     if optimizeProjections>0
-        U = optimizePQSQprojections(x,V,potentialFunction);
+        U = optimizePQSQprojections(x,V,potentialFunction,eps);
     end
 end

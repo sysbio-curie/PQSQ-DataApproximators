@@ -1,8 +1,15 @@
-function U = optimizePQSQprojections(x,V,potentialFunction)
+function U = optimizePQSQprojections(x, V, potentialFunction, eps)
+%optimizePQSQprojections calculates the vector U which provides minimum of
+%PQSQ_NORM(x-U*V')
+%   x is n-by-m matrix of data to approximate
+%   V is m-by-1 vector to project data
+%   potentialFunction is structure which define PQSQ potential function
+%       (see definePotentialFunction.m for details)
+%   eps is tolerance level for iterations convergence
+
     [n, m] = size(x);
     XU = zeros(n,1);
     SU = zeros(n,1);
-    eps = 0.001;
     UU = zeros(n,m);
     
     for i=1:m %Loop of several initiations
@@ -15,7 +22,7 @@ function U = optimizePQSQprojections(x,V,potentialFunction)
             XU(:)=0;
             SU(:)=0;
             for j=1:m
-                inds = splitPointIntervalsFast1(x(:,j)-uk.*V(j),potentialFunction.intervals(j,:));
+                inds = identifyIntervals(x(:,j)-uk.*V(j),potentialFunction.intervals(j,:));
                 XU = XU + potentialFunction.A(j,inds)'.*(x(:,j))*V(j);
                 SU = SU + potentialFunction.A(j,inds)'.*(V(j)*V(j));
             end;
@@ -33,7 +40,7 @@ function U = optimizePQSQprojections(x,V,potentialFunction)
     %Calculate potential for each projection
     err = zeros(n,m);
     for i=1:m
-        err(:,i) = PQSQ_Norm_fast( x-UU(:,i)*V', potentialFunction, 2);
+        err(:,i) = PQSQ_Norm( x-UU(:,i)*V', potentialFunction, 2);
     end
     %Search minimal positions
     [~, ind] = min(err,[],2);

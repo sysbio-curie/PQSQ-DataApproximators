@@ -1,6 +1,6 @@
 function potentialFunction = definePotentialFunction( x, number_of_intervals, potential_function_handle, delta )
-%definePotentialFunction defines "uniform" intervals for data matrix x and
-%specified number_of_intervals.
+%definePotentialFunction defines "uniform in square" intervals for data
+%matrix x and specified number_of_intervals.
 %   x is n-by-m matrix.
 %   number_of_intervals is required number of intervals.
 %   potential_function_handle is function handler for coefficients
@@ -30,7 +30,7 @@ function potentialFunction = definePotentialFunction( x, number_of_intervals, po
     intervals = characteristic_distance * row;
     
     potentialFunction.intervals = [intervals, Inf(size(x,2),1)];
-    [potentialFunction.A,potentialFunction.B] = computeABcoefficients_fast(intervals, potential_function_handle);
+    [potentialFunction.A,potentialFunction.B] = computeABcoefficients(intervals, potential_function_handle);
     
     
 

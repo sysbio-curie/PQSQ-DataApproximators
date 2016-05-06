@@ -1,5 +1,5 @@
-function [A,B] = computeABcoefficients_fast(intervals, potential_function_handle)
-%computeABcoefficients_fast calculates the coefficients a abd b for
+function [A,B] = computeABcoefficients(intervals, potential_function_handle)
+%computeABcoefficients calculates the coefficients a and b for
 %quadratic fragments of potential function.
 %   intervals is the m-by-K matrix of intervals' boudaries without final
 %       infinit boundary.

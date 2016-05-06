@@ -1,9 +1,8 @@
-function norm = PQSQ_Norm_fast( x, potentialFunction, ret )
+function norm = PQSQ_Norm( x, potentialFunction, ret )
 %Calculate the PQSQ Error for one or more points vector.
 %  x is n-by-m matrix with rows which correspond to data points.
-%  intervals is m-by-K matrix with K values of thresholds which corresponds
-%       to each coordinate. intervals(:,K) MUST be equal to Inf.
-%   A and B are matrices of coefficients of quadratic functions
+%   potentialFunction is structure which define PQSQ potential function
+%       (see definePotentialFunction.m for details)
 %   ret is type of returned values:
 %       0 or omitted means returning the whole matrix of potentials
 %       1 means returning the row vector of sums of potentials for each
@@ -15,7 +14,7 @@ function norm = PQSQ_Norm_fast( x, potentialFunction, ret )
     norm = zeros(n,m);
 
     for k=1:m
-        norm(:,k) = PQSQ_fast(x(:,k),potentialFunction,k);
+        norm(:,k) = PQSQ(x(:,k),potentialFunction,k);
     end
 
     if nargin>2 

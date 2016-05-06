@@ -1,6 +1,6 @@
 function intervals = defineIntervals(x, number_of_intervals, delta)
-%defineIntervals define "uniform" intervals for data matrix x and specified
-%number of intervals.
+%defineIntervals define "uniform in squares" intervals for data matrix x
+%and specified number of intervals.
 %   x is n-by-m matrix.
 %   number_of_intervals is required number of intervals.
 %   delta is coefficient of shrinkage which is greater than 0 ang not
