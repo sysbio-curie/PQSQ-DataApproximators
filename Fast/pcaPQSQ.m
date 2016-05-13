@@ -27,7 +27,23 @@ function [V,U,C] = pcaPQSQ(x, ncomp, potential_function_handle, varargin)
 %           lenths of projection of data point (row) onto corresponding
 %           principal component.
 %       C is 1-by-m the vector of PQSQ mean (coordinates of central point).
-%       D is 1-by-ncomp vctor of values of fraction of explained energy.
+%
+%Examples
+%  x = rand(100,5); %Generate 100 randomly uniformly distributed points in 
+%                   %5D
+%  Calculate two principal components for 5 intervals L1 potential function
+%  [V,U,C] = pcaPQSQ(x, 2, @L1);
+%
+%  Draw data in the space of the two first original coordinates.
+%  subplot(1,2,1);
+%  plot(x(:,1),x(:,2),'ro');
+%  Draw data in the space of the first two principal components.
+%  subplot(1,2,2);
+%  plot(U(:,1),U(:,2),'ro');
+%
+%  Calcualte the projections of data points onto principal components
+%  x1 = bsxfun(@plus,U*V',C);
+
 
     intervals = 0;
     number_of_intervals = 5;

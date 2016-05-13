@@ -65,8 +65,8 @@ function [idxbest, Cbest, sumDbest, Dbest] = kmeansPQSQ(X, k, potential_function
 %   Example:
 %
 %       X = [randn(20,2)+ones(20,2); randn(20,2)-ones(20,2)];
-%       [cidx, ctrs] = kmeans(X, 2, @L1, 'Distance','city', ...
-%                             'Replicates',5);
+%       [cidx, ctrs] = kmeansPQSQ(X, 2, @L1, 'Replicates',5);
+%
 %       plot(X(cidx==1,1),X(cidx==1,2),'r.', ...
 %            X(cidx==2,1),X(cidx==2,2),'b.', ctrs(:,1),ctrs(:,2),'kx');
 %
