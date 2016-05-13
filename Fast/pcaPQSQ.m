@@ -19,6 +19,7 @@ function [V,U,C] = pcaPQSQ(x, ncomp, potential_function_handle, varargin)
 %       'projecttype', 'PQSQ'/'L2' pair serves to specify type of
 %           projections to subtract from data after a principal component
 %           finding.
+%       'eps', positive number is tolerance level for component calculation.
 %   Output arguments
 %       V is m-by-ncomp matrix of ncomp columns each of which is the
 %           principal component.
@@ -32,6 +33,7 @@ function [V,U,C] = pcaPQSQ(x, ncomp, potential_function_handle, varargin)
     number_of_intervals = 5;
     typeOfProjection = 'PQSQ';
     delta = 1;
+    eps = 0.001;
 
     %Process Name, Value pairs
     for i=1:length(varargin)
@@ -43,6 +45,8 @@ function [V,U,C] = pcaPQSQ(x, ncomp, potential_function_handle, varargin)
             typeOfProjection = varargin{i+1};
         elseif strcmp(varargin{i},'intshrinkage')
             delta = varargin{i+1};
+        elseif strcmp(varargin{i},'eps')
+            eps = varargin{i+1};
         end
     end
 
@@ -55,7 +59,7 @@ function [V,U,C] = pcaPQSQ(x, ncomp, potential_function_handle, varargin)
     end
 
     %calculate central point
-    C = PQSQ_Mean(x, potentialFunction, varargin);
+    C = PQSQ_Mean(x, potentialFunction, eps);
 
     % initiate xwork like x-C and preallocate matrices for V and U
     xwork = bsxfun(@minus,x,C);
@@ -64,7 +68,7 @@ function [V,U,C] = pcaPQSQ(x, ncomp, potential_function_handle, varargin)
         
         for i=1:ncomp
             %Calculate one component
-            [V(:,i), U(:,i)] = onePC_PQSQ(xwork, potentialFunction, varargin{:});
+            [Vi, Ui] = onePC_PQSQ(xwork, potentialFunction, varargin{:});
             V(:,i) = Vi;
             U(:,i) = Ui;
 

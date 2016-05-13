@@ -2,7 +2,7 @@ nFiles = 100;
 n=1000;
 m=10;
 q=5;
-p=0; %0-3;
+%p=0; %0-3;
 mus = [1, 5, 10, 25];
 f=0.1;
 
@@ -14,7 +14,7 @@ dirName = ['n', num2str(n,'%04.0f'), 'm', num2str(m,'%04.0f'), 'q',...
 mkdir(dirName);
 dirName=[dirName, '/'];
 for nn = 1:nFiles
-    testSetGenerator( n, m, q, p, 0, f, nn, dirName);
+    testSetGenerator( n, m, q, 0, 0, f, nn, dirName);
 end
 
 %Create contaminated sets

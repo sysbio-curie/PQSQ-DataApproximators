@@ -27,9 +27,9 @@ function c = PQSQ_Mean(x, potentialFunction, eps)
     
     %Form output vector
     c = center_zero;
-    ii = ind==1;
-    c(ii) = center_mean(ii);
     ii = ind==2;
+    c(ii) = center_mean(ii);
+    ii = ind==3;
     c(ii) = center_median(ii);
 end
 

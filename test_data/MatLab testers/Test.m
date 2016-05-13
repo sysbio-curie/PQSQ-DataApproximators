@@ -53,8 +53,8 @@ function str = oneDirTest( name )
             %first principal components.
             tic;
             for p = 1:nTimes
-%L2                res = simplePCA(t1);
-                res = PQSQ_PCA(t1);
+%                res = simplePCA(t1); %L2
+                res = PQSQ_PCA(t1);  %PQSQ
             end
             str.time(k) = toc/nTimes;
             %Calculate the error as sum of absolute values of the 6-10
