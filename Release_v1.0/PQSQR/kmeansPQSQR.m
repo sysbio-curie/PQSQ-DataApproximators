@@ -1,26 +1,26 @@
-function [idxbest, Cbest, sumDbest, Dbest] = kmeansPQSQ(X, k, potential_function_handle, varargin)
-%kmeansPQSQ K-means clustering with PQSQ potential instead of distance.
-%   IDX = kmeansPQSQ(X, K, @fun) partitions the points in the N-by-P data
+function [idxbest, Cbest, sumDbest, Dbest] = kmeansPQSQR(X, k, potential_function_handle, varargin)
+%kmeansPQSQR K-means clustering with PQSQ potential instead of distance.
+%   IDX = kmeansPQSQR(X, K, @fun) partitions the points in the N-by-P data
 %   matrix X into K clusters. This partition minimizes the sum, over all
 %   clusters, of the within-cluster sums of point-to-cluster-centroid PQSQ
 %   potential. Rows of X correspond to points, columns correspond to
-%   variables.  Note: when X is a vector, kmeansPQSQ treats it as an N-by-1
-%   data matrix, regardless of its orientation.  kmeansPQSQ returns an
+%   variables. Note: when X is a vector, kmeansPQSQR treats it as an N-by-1
+%   data matrix, regardless of its orientation.  kmeansPQSQR returns an
 %   N-by-1 vector IDX containing the cluster indices of each point.
 %
-%   kmeansPQSQ do not work with missed data. All NaNs treated as missed
+%   kmeansPQSQR do not work with missed data. All NaNs treated as missed
 %   data and caused error.
 %
-%   [IDX, C] = kmeansPQSQ(X, K, @fun) returns the K cluster centroid
+%   [IDX, C] = kmeansPQSQR(X, K, @fun) returns the K cluster centroid
 %   locations in the K-by-P matrix C.
 %
-%   [IDX, C, SUMD] = kmeansPQSQ(X, K, @fun) returns the within-cluster sums
-%   of point-to-centroid distances in the K-by-1 vector sumD.
+%   [IDX, C, SUMD] = kmeansPQSQR(X, K, @fun) returns the within-cluster
+%   sums of point-to-centroid distances in the K-by-1 vector sumD.
 %
-%   [IDX, C, SUMD, D] = kmeansPQSQ(X, K, @fun) returns distances from each
+%   [IDX, C, SUMD, D] = kmeansPQSQR(X, K, @fun) returns distances from each
 %   point to every centroid in the N-by-K matrix D.
 %
-%   [ ... ] = kmeansPQSQ(..., 'PARAM1',val1, 'PARAM2',val2, ...) specifies
+%   [ ... ] = kmeansPQSQR(..., 'PARAM1',val1, 'PARAM2',val2, ...) specifies
 %   optional parameter name/value pairs to control the iterative algorithm
 %   used by KMEANS.  Parameters are:
 %
@@ -65,14 +65,14 @@ function [idxbest, Cbest, sumDbest, Dbest] = kmeansPQSQ(X, k, potential_function
 %   Example:
 %
 %       X = [randn(20,2)+ones(20,2); randn(20,2)-ones(20,2)];
-%       [cidx, ctrs] = kmeansPQSQ(X, 2, @L1, 'Replicates',5);
+%       [cidx, ctrs] = kmeansPQSQR(X, 2, @L1, 'Replicates',5);
 %
 %       plot(X(cidx==1,1),X(cidx==1,2),'r.', ...
 %            X(cidx==2,1),X(cidx==2,2),'b.', ctrs(:,1),ctrs(:,2),'kx');
 %
 %
-%   kmeansPQSQ uses a iterative algorithm to minimize the sum of
-%   point-to-centroid PQSQ potential, summed over all K clusters.  Method
+%   kmeansPQSQR uses a iterative algorithm to minimize the sum of
+%   point-to-centroid PQSQ potential, summed over all K clusters. Method
 %   uses what the literature often describes as "batch" updates, where each
 %   iteration consists of reassigning points to their nearest cluster
 %   centroid, all at once, followed by recalculation of cluster centroids.
@@ -85,7 +85,7 @@ function [idxbest, Cbest, sumDbest, Dbest] = kmeansPQSQ(X, k, potential_function
     end
 
     if any(any(isnan(X)))
-        error('Missed data unacceptable');
+        error('Missed data is unacceptable');
     end
 
     % n points in p dimensional space
@@ -126,12 +126,13 @@ function [idxbest, Cbest, sumDbest, Dbest] = kmeansPQSQ(X, k, potential_function
 
     %Form potential function structure
     if isscalar(intervals)
-        potentialFunction = definePotentialFunction(X, number_of_intervals,...
-            potential_function_handle, delta);
+        potentialFunction = PQSQR_definePotentialFunction(X, ...
+            number_of_intervals, potential_function_handle, delta);
     else
         potentialFunction.intervals = [intervals, Inf(size(X,2),1)];
+        potentialFunction.sqint = potentialFunction.intervals.^2;
         [potentialFunction.A,potentialFunction.B] = ...
-            computeABcoefficients(intervals, potential_function_handle);
+            PQSQR_computeABcoefficients(intervals, potential_function_handle);
     end
 
     %Start
@@ -202,7 +203,7 @@ function [idxbest, Cbest, sumDbest, Dbest] = kmeansPQSQ(X, k, potential_function
                 C = X(randsample(S,n,k),:);
             case 'cluster'
                 Xsubset = X(randsample(S,n,floor(.1*n)),:);
-                [~, C] = kmeansPQSQ(Xsubset, k, potential_function_handle, varargin{:}, 'start','sample', 'replicates',1);
+                [~, C] = kmeansPQSQR(Xsubset, k, potential_function_handle, varargin{:}, 'start','sample', 'replicates',1);
             case 'numeric'
                 C = CC(:,:,rep);
             case {'plus','kmeans++'}
@@ -253,7 +254,8 @@ function [idxbest, Cbest, sumDbest, Dbest] = kmeansPQSQ(X, k, potential_function
                     continue;
                 end
                 ind = indx==kk;
-                C(kk,:) = PQSQ_Mean(X(ind,:), potentialFunction, eps);
+                C(kk,:) = PQSQR_Mean(X(ind,:), potentialFunction,...
+                    eps, C(kk,:));
             end
         end
         
@@ -268,7 +270,6 @@ function [idxbest, Cbest, sumDbest, Dbest] = kmeansPQSQ(X, k, potential_function
             BestTotal = dd;
         end
     end
-
 end
 
 function D = distfun(X, C, potentialFunction)
@@ -277,7 +278,7 @@ function D = distfun(X, C, potentialFunction)
     D = zeros(size(X,1),k);
 
     for i = 1:k
-        D(:,i) = PQSQ_Norm(bsxfun(@minus,X,C(i,:)), potentialFunction, 2);
+        D(:,i) = PQSQR(bsxfun(@minus,X,C(i,:)), potentialFunction);
     end
 end % function
 
