@@ -2,6 +2,10 @@
 
 This is a set of Matlab procedures for performing PQSQ-based data approximation.
 
+PQSQ stands for "piece-wise quadratic sub-quadratic" error function which can approximate a large family of error functions in any standard machine learning algorithm and substitute the standard quadratic error function. This is a way to construct very fast and relatively accurate approximators or regressions with non-quadratic error function or with non-quadratic regularizers.
+
+[The theory behind PQSQ methods](http://www.math.le.ac.uk/people/ag153/homepage/GorbanMirkesZinovyevNN2016.pdf).
+
 In particular,
 
 PQSQmean - computes the mean value with PQSQ approximation error 
